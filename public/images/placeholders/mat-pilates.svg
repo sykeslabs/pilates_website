@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Mat Pilates">
+  <defs>
+    <linearGradient id="matBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#B9CDBB"/>
+      <stop offset="100%" stop-color="#7E9A82"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#matBg)"/>
+  <ellipse cx="400" cy="470" rx="260" ry="26" fill="#00000014"/>
+  <rect x="150" y="400" width="500" height="70" rx="16" fill="#F6F1EA" opacity="0.9"/>
+  <g stroke="#3A3A3A" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M310 300 C310 260 340 235 375 235 C405 235 425 255 425 285"/>
+    <circle cx="375" cy="205" r="30" fill="#3A3A3A" stroke="none"/>
+    <path d="M375 265 C355 300 330 330 300 345"/>
+    <path d="M375 265 C400 300 430 320 470 330"/>
+    <path d="M310 300 C280 330 250 345 205 350"/>
+    <path d="M425 285 C455 310 500 320 545 315"/>
+  </g>
+</svg>

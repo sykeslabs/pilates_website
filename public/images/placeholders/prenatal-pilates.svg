@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Prenatal Pilates">
+  <defs>
+    <linearGradient id="prenatalBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F3DCC9"/>
+      <stop offset="100%" stop-color="#D9A87B"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#prenatalBg)"/>
+  <ellipse cx="400" cy="470" rx="260" ry="26" fill="#00000014"/>
+  <g stroke="#3A3A3A" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="400" cy="230" r="30" fill="#3A3A3A" stroke="none"/>
+    <path d="M400 260 C365 275 350 310 355 350"/>
+    <ellipse cx="410" cy="350" rx="55" ry="48" fill="#F6F1EA"/>
+    <path d="M355 350 C340 385 340 415 355 440"/>
+    <path d="M465 350 C480 385 480 415 465 440"/>
+    <path d="M400 260 C420 270 435 285 440 305"/>
+  </g>
+</svg>

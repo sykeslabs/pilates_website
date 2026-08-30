@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Reformer Basics">
+  <defs>
+    <linearGradient id="reformerBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8C4C0"/>
+      <stop offset="100%" stop-color="#C97C5D"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#reformerBg)"/>
+  <ellipse cx="400" cy="470" rx="280" ry="24" fill="#00000014"/>
+  <g fill="none" stroke="#3A3A3A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="180" y="330" width="440" height="60" rx="10" fill="#F6F1EA"/>
+    <rect x="150" y="380" width="60" height="70" rx="8" fill="#F6F1EA"/>
+    <rect x="590" y="380" width="60" height="70" rx="8" fill="#F6F1EA"/>
+    <path d="M240 330 L240 250"/>
+    <path d="M270 330 L270 250"/>
+    <path d="M300 330 L300 250"/>
+    <rect x="215" y="225" width="110" height="30" rx="8" fill="#F6F1EA"/>
+    <rect x="590" y="330" width="20" height="30" fill="#3A3A3A" opacity="0.4" stroke="none"/>
+  </g>
+</svg>

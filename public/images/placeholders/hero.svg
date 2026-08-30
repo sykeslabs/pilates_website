@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" role="img" aria-label="">
+  <defs>
+    <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7E9A82"/>
+      <stop offset="100%" stop-color="#425046"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="700" fill="url(#heroBg)"/>
+  <path d="M0 520 C 300 440, 500 600, 820 500 S 1300 420, 1600 500 L1600 700 L0 700 Z" fill="#00000018"/>
+  <path d="M0 560 C 320 500, 560 640, 860 550 S 1320 470, 1600 560 L1600 700 L0 700 Z" fill="#F6F1EA" opacity="0.08"/>
+  <g stroke="#F6F1EA" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <circle cx="1290" cy="220" r="34" fill="#F6F1EA" stroke="none"/>
+    <path d="M1290 254 C1250 274 1230 315 1240 360"/>
+    <path d="M1290 254 C1330 274 1355 300 1350 335"/>
+    <path d="M1240 360 C1235 405 1250 440 1280 460"/>
+    <path d="M1350 335 C1360 375 1345 405 1315 425"/>
+  </g>
+</svg>
