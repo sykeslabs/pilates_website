@@ -121,29 +121,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="sticky top-16 z-30 flex min-h-screen flex-col justify-center bg-sage-50 px-6 py-20">
-        <div className="mx-auto w-full max-w-4xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-charcoal">
-            {dict.home.stepsHeading}
-          </h2>
-          <div className="mt-12 grid grid-cols-1 gap-8 text-left sm:grid-cols-3">
-            {dict.home.steps.map((item, i) => (
-              <div key={item.title} className="rounded-2xl bg-white p-6 shadow-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sage-700 text-sm font-semibold text-white">
-                  {i + 1}
-                </span>
-                <h3 className="mt-4 font-semibold text-charcoal">{item.title}</h3>
-                <p className="mt-1 text-sm text-charcoal/70">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {stories && stories.length > 0 && (
         <section
           id="stories"
-          className="sticky top-16 z-40 flex min-h-screen flex-col justify-center bg-cream px-6 py-20"
+          className="sticky top-16 z-30 flex min-h-screen flex-col justify-center bg-cream px-6 py-20"
         >
           <div className="mx-auto w-full max-w-6xl">
             <div className="mx-auto max-w-2xl text-center">
@@ -162,6 +143,25 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <section className="sticky top-16 z-40 flex min-h-screen flex-col justify-center bg-sage-50 px-6 py-20">
+        <div className="mx-auto w-full max-w-4xl text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-charcoal">
+            {dict.home.stepsHeading}
+          </h2>
+          <div className="mt-12 grid grid-cols-1 gap-8 text-left sm:grid-cols-3">
+            {dict.home.steps.map((item, i) => (
+              <div key={item.title} className="rounded-2xl bg-white p-6 shadow-sm">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sage-700 text-sm font-semibold text-white">
+                  {i + 1}
+                </span>
+                <h3 className="mt-4 font-semibold text-charcoal">{item.title}</h3>
+                <p className="mt-1 text-sm text-charcoal/70">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

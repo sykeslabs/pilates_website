@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { notifyBooking, notifyWaitlistJoin } from "@/app/actions/booking";
 import { courseName } from "@/lib/i18n/content";
 import { localeTags, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
 import type { AvailabilitySlot, CourseType } from "@/lib/types";
+
+type BookingResult = { slot: AvailabilitySlot; course: CourseType; waitlisted: boolean };
 
 export function BookingFlow({
   courses,
@@ -41,8 +43,7 @@ export function BookingFlow({
   const [selectedCourses, setSelectedCourses] = useState<CourseType[]>(
     initialCourse ? [initialCourse] : [],
   );
-  const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
-  const [joiningWaitlist, setJoiningWaitlist] = useState(false);
+  const [selectedSlots, setSelectedSlots] = useState<AvailabilitySlot[]>([]);
   const [slots, setSlots] = useState<AvailabilitySlot[] | null>(null);
   const [slotsError, setSlotsError] = useState<string | null>(null);
 
@@ -53,25 +54,8 @@ export function BookingFlow({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
-
-  const timeStepRef = useRef<HTMLDivElement>(null);
-  const detailsStepRef = useRef<HTMLDivElement>(null);
-
-  function isMobileViewport() {
-    return typeof window !== "undefined" && window.matchMedia("(max-width: 639px)").matches;
-  }
-
-  useEffect(() => {
-    if (selectedCourses.length > 0 && isMobileViewport()) {
-      timeStepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [selectedCourses]);
-
-  useEffect(() => {
-    if (selectedSlot && isMobileViewport()) {
-      detailsStepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [selectedSlot]);
+  const [bookingResults, setBookingResults] = useState<BookingResult[]>([]);
+  const [partialFailureCount, setPartialFailureCount] = useState(0);
 
   function toggleCourse(course: CourseType) {
     setSelectedCourses((prev) =>
@@ -79,20 +63,17 @@ export function BookingFlow({
         ? prev.filter((c) => c.id !== course.id)
         : [...prev, course],
     );
-    setSelectedSlot(null);
-    setJoiningWaitlist(false);
+    setSelectedSlots([]);
     setSlots(null);
     setSlotsError(null);
   }
 
-  function selectSlot(slot: AvailabilitySlot, waitlist: boolean) {
-    if (selectedSlot?.id === slot.id) {
-      setSelectedSlot(null);
-      setJoiningWaitlist(false);
-    } else {
-      setSelectedSlot(slot);
-      setJoiningWaitlist(waitlist);
-    }
+  function toggleSlot(slot: AvailabilitySlot) {
+    setSelectedSlots((prev) =>
+      prev.some((s) => s.id === slot.id)
+        ? prev.filter((s) => s.id !== slot.id)
+        : [...prev, slot],
+    );
   }
 
   const selectedCourseIds = useMemo(
@@ -131,93 +112,121 @@ export function BookingFlow({
     };
   }, [selectedCourseIds, dict.book.loadTimesError]);
 
-  const bookedCourse = selectedSlot
-    ? (courses.find((c) => c.id === selectedSlot.course_type_id) ?? null)
-    : null;
+  const anySelectedIsWaitlist = selectedSlots.some((s) => s.booked_count >= s.capacity);
+  const allSelectedAreWaitlist =
+    selectedSlots.length > 0 && selectedSlots.every((s) => s.booked_count >= s.capacity);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedSlot || !bookedCourse) return;
+    if (selectedSlots.length === 0) return;
 
     setSubmitting(true);
     setSubmitError(null);
 
     const supabase = createClient();
+    const succeeded: BookingResult[] = [];
+    let failedCount = 0;
 
-    if (joiningWaitlist) {
-      const { error } = await supabase.from("waitlist_entries").insert({
-        slot_id: selectedSlot.id,
-        participant_name: name,
-        email,
-        phone: phone || null,
-        remark: remark || null,
-      });
-
-      setSubmitting(false);
-
-      if (error) {
-        setSubmitError(error.message || dict.book.genericWaitlistError);
-        return;
+    for (const slot of selectedSlots) {
+      const course = courses.find((c) => c.id === slot.course_type_id);
+      if (!course) {
+        failedCount += 1;
+        continue;
       }
+      const isFull = slot.booked_count >= slot.capacity;
 
-      notifyWaitlistJoin({
-        participantName: name,
-        participantEmail: email,
-        participantPhone: phone || null,
-        courseName: courseName(bookedCourse, locale),
-        startTime: selectedSlot.start_time,
-      }).catch(() => {});
-
-      setConfirmed(true);
-      return;
+      if (isFull) {
+        const { error } = await supabase.from("waitlist_entries").insert({
+          slot_id: slot.id,
+          participant_name: name,
+          email,
+          phone: phone || null,
+          remark: remark || null,
+        });
+        if (error) {
+          failedCount += 1;
+          continue;
+        }
+        notifyWaitlistJoin({
+          participantName: name,
+          participantEmail: email,
+          participantPhone: phone || null,
+          courseName: courseName(course, locale),
+          startTime: slot.start_time,
+        }).catch(() => {});
+        succeeded.push({ slot, course, waitlisted: true });
+      } else {
+        const { error } = await supabase.rpc("book_slot", {
+          p_slot_id: slot.id,
+          p_participant_name: name,
+          p_email: email,
+          p_phone: phone || null,
+          p_remark: remark || null,
+        });
+        if (error) {
+          failedCount += 1;
+          continue;
+        }
+        // The booking is already confirmed at this point — email is a
+        // best-effort extra, not a condition for showing the confirmation.
+        notifyBooking({
+          participantName: name,
+          participantEmail: email,
+          participantPhone: phone || null,
+          participantRemark: remark || null,
+          courseName: courseName(course, locale),
+          startTime: slot.start_time,
+        }).catch(() => {});
+        succeeded.push({ slot, course, waitlisted: false });
+      }
     }
-
-    const { error } = await supabase.rpc("book_slot", {
-      p_slot_id: selectedSlot.id,
-      p_participant_name: name,
-      p_email: email,
-      p_phone: phone || null,
-      p_remark: remark || null,
-    });
 
     setSubmitting(false);
 
-    if (error) {
-      setSubmitError(error.message || dict.book.genericBookError);
+    if (succeeded.length === 0) {
+      setSubmitError(dict.book.genericBookError);
       return;
     }
 
-    // The booking is already confirmed at this point — email is a
-    // best-effort extra, not a condition for showing the confirmation.
-    notifyBooking({
-      participantName: name,
-      participantEmail: email,
-      participantPhone: phone || null,
-      participantRemark: remark || null,
-      courseName: courseName(bookedCourse, locale),
-      startTime: selectedSlot.start_time,
-    }).catch(() => {});
-
+    setBookingResults(succeeded);
+    setPartialFailureCount(failedCount);
     setConfirmed(true);
   }
 
-  if (confirmed && bookedCourse && selectedSlot) {
+  if (confirmed && bookingResults.length > 0) {
+    const allWaitlisted = bookingResults.every((r) => r.waitlisted);
+    const anyWaitlisted = bookingResults.some((r) => r.waitlisted);
     return (
       <div className="rounded-2xl border border-sage-100 bg-white p-8 text-center shadow-sm">
         <h2 className="text-2xl font-semibold text-charcoal">
-          {joiningWaitlist ? dict.book.waitlistConfirmedTitle : dict.book.confirmedTitle}
+          {allWaitlisted ? dict.book.waitlistConfirmedTitle : dict.book.confirmedTitle}
         </h2>
-        <p className="mt-3 text-charcoal/70">
-          {courseName(bookedCourse, locale)} {dict.book.confirmedOn}{" "}
-          {dateFormatter.format(new Date(selectedSlot.start_time))} {dict.book.confirmedAt}{" "}
-          {timeFormatter.format(new Date(selectedSlot.start_time))}.
-        </p>
-        <p className="mt-1 text-sm text-charcoal/60">
-          {(joiningWaitlist ? dict.book.waitlistConfirmedFooter : dict.book.confirmedFooter).replace(
+        <ul className="mt-4 space-y-2 text-left">
+          {bookingResults.map((r) => (
+            <li
+              key={r.slot.id}
+              className="rounded-lg border border-sage-100 px-4 py-2 text-sm text-charcoal/80"
+            >
+              <span className="font-medium text-charcoal">{courseName(r.course, locale)}</span>{" "}
+              {dict.book.confirmedOn} {dateFormatter.format(new Date(r.slot.start_time))}{" "}
+              {dict.book.confirmedAt} {timeFormatter.format(new Date(r.slot.start_time))}
+              {r.waitlisted && (
+                <span className="ml-2 text-xs font-semibold uppercase tracking-wide text-sage-700">
+                  {dict.book.joinWaitlistAction}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-sm text-charcoal/60">
+          {(anyWaitlisted ? dict.book.waitlistConfirmedFooter : dict.book.confirmedFooter).replace(
             "{email}",
             email,
           )}
         </p>
+        {partialFailureCount > 0 && (
+          <p className="mt-3 text-sm text-red-600">{dict.book.genericBookError}</p>
+        )}
       </div>
     );
   }
@@ -258,7 +267,7 @@ export function BookingFlow({
       </div>
 
       {selectedCourses.length > 0 && (
-        <div ref={timeStepRef}>
+        <div>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-sage-700">
             {dict.book.step2}
           </h2>
@@ -275,15 +284,13 @@ export function BookingFlow({
                 <div className="divide-y divide-sage-100 rounded-2xl border border-sage-100 sm:hidden">
                   {slots.map((slot) => {
                     const isFull = slot.booked_count >= slot.capacity;
+                    const isSelected = selectedSlots.some((s) => s.id === slot.id);
                     const slotCourse = courses.find((c) => c.id === slot.course_type_id);
                     return (
-                      <div
-                        key={slot.id}
-                        className={`p-4 ${selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"}`}
-                      >
+                      <div key={slot.id} className={`p-4 ${isSelected ? "bg-sage-50" : "bg-white"}`}>
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            {selectedCourses.length > 1 && slotCourse && (
+                            {slotCourse && (
                               <div className="text-xs font-semibold uppercase tracking-wide text-sage-700">
                                 {courseName(slotCourse, locale)}
                               </div>
@@ -303,10 +310,10 @@ export function BookingFlow({
                         </div>
                         <button
                           type="button"
-                          aria-pressed={selectedSlot?.id === slot.id}
-                          onClick={() => selectSlot(slot, isFull)}
+                          aria-pressed={isSelected}
+                          onClick={() => toggleSlot(slot)}
                           className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-medium transition ${
-                            selectedSlot?.id === slot.id
+                            isSelected
                               ? "bg-sage-700 text-white"
                               : isFull
                                 ? "border border-sage-100 text-charcoal/60 hover:border-sage-300"
@@ -324,9 +331,7 @@ export function BookingFlow({
                   <table className="w-full text-left text-sm">
                     <thead className="bg-sage-50 text-charcoal/70">
                       <tr>
-                        {selectedCourses.length > 1 && (
-                          <th className="px-4 py-3 font-medium">{dict.book.courseColumn}</th>
-                        )}
+                        <th className="px-4 py-3 font-medium">{dict.book.courseColumn}</th>
                         <th className="px-4 py-3 font-medium">{dict.book.dateColumn}</th>
                         <th className="px-4 py-3 font-medium">{dict.book.timeColumn}</th>
                         <th className="px-4 py-3 font-medium">{dict.book.spotsColumn}</th>
@@ -336,19 +341,18 @@ export function BookingFlow({
                     <tbody>
                       {slots.map((slot) => {
                         const isFull = slot.booked_count >= slot.capacity;
+                        const isSelected = selectedSlots.some((s) => s.id === slot.id);
                         const slotCourse = courses.find((c) => c.id === slot.course_type_id);
                         return (
                           <tr
                             key={slot.id}
                             className={`border-t border-sage-100 ${
-                              selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"
+                              isSelected ? "bg-sage-50" : "bg-white"
                             }`}
                           >
-                            {selectedCourses.length > 1 && (
-                              <td className="px-4 py-3 text-charcoal">
-                                {slotCourse ? courseName(slotCourse, locale) : "—"}
-                              </td>
-                            )}
+                            <td className="px-4 py-3 text-charcoal">
+                              {slotCourse ? courseName(slotCourse, locale) : "—"}
+                            </td>
                             <td className="px-4 py-3 text-charcoal">
                               {dateFormatter.format(new Date(slot.start_time))}
                             </td>
@@ -363,10 +367,10 @@ export function BookingFlow({
                             <td className="px-4 py-3 text-right">
                               <button
                                 type="button"
-                                aria-pressed={selectedSlot?.id === slot.id}
-                                onClick={() => selectSlot(slot, isFull)}
+                                aria-pressed={isSelected}
+                                onClick={() => toggleSlot(slot)}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                                  selectedSlot?.id === slot.id
+                                  isSelected
                                     ? "bg-sage-700 text-white"
                                     : isFull
                                       ? "border border-sage-100 text-charcoal/60 hover:border-sage-300"
@@ -388,12 +392,12 @@ export function BookingFlow({
         </div>
       )}
 
-      {selectedSlot && (
-        <div ref={detailsStepRef} className="rounded-2xl border border-sage-100 bg-sage-50 p-6 sm:p-8">
+      {selectedSlots.length > 0 && (
+        <div className="rounded-2xl border border-sage-100 bg-sage-50 p-6 sm:p-8">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-sage-700">
             {dict.book.step3}
           </h2>
-          {joiningWaitlist && (
+          {anySelectedIsWaitlist && (
             <p className="mt-2 text-sm text-charcoal/70">{dict.book.waitlistIntro}</p>
           )}
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
@@ -452,7 +456,7 @@ export function BookingFlow({
               disabled={submitting}
               className="w-full rounded-full bg-sage-700 px-4 py-3 font-medium text-white transition hover:bg-sage-500 disabled:opacity-60"
             >
-              {joiningWaitlist
+              {allSelectedAreWaitlist
                 ? submitting
                   ? dict.book.waitlistSubmitting
                   : dict.book.waitlistSubmit
