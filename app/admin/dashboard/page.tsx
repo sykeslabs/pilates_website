@@ -37,7 +37,7 @@ export default async function AdminDashboardPage() {
     supabase
       .from("success_stories")
       .select("*")
-      .order("display_order", { ascending: true }),
+      .order("created_at", { ascending: false }),
     supabase
       .from("availability_slots")
       .select("*, course_types(name)")

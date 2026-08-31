@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { MobileNav } from "@/components/MobileNav";
 import { CoursesNavDropdown } from "@/components/CoursesNavDropdown";
+import { BookNavLink } from "@/components/BookNavLink";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
 import type { CourseType } from "@/lib/types";
@@ -46,12 +47,10 @@ export function Header({
             {dict.footer.contactLink}
           </Link>
           <LanguageSelector locale={locale} />
-          <Link
-            href="/book"
+          <BookNavLink
+            label={dict.header.book}
             className="rounded-full bg-sage-700 px-5 py-2 text-white transition hover:bg-sage-500"
-          >
-            {dict.header.book}
-          </Link>
+          />
           <MobileNav dict={dict} locale={locale} courses={courses} />
         </nav>
       </div>

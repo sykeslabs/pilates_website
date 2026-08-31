@@ -154,6 +154,8 @@ export const fr: Dictionary = {
     confirmedOn: "le",
     confirmedAt: "à",
     confirmedFooter: "Nous avons vos coordonnées ({email}) — à bientôt sur le tapis !",
+    emailConfirmationNote: "Vous recevrez un e-mail de confirmation dans les prochaines minutes.",
+    downloadIcsAction: "Ajouter au calendrier (.ics)",
   },
   adminLogin: {
     heading: "Connexion studio",

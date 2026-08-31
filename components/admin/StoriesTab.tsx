@@ -199,8 +199,15 @@ export function StoriesTab({
             className="flex items-center justify-between rounded-2xl border border-sage-100 bg-white p-5"
           >
             <div>
-              <div className="font-medium text-charcoal">{story.name}</div>
-              <div className="text-sm text-charcoal/60 line-clamp-1">{story.quote}</div>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-charcoal">{story.name}</span>
+                <span className="text-xs text-charcoal/40">
+                  {new Date(story.created_at).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="text-sm text-charcoal/60 line-clamp-1">
+                {story.instagram_url ? story.instagram_url : story.quote}
+              </div>
             </div>
             <div className="flex gap-2">
               <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { courseName } from "@/lib/i18n/content";
 import type { Locale } from "@/lib/i18n/config";
@@ -20,6 +20,18 @@ export function MobileNav({
 }) {
   const [open, setOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   const links = [
     { href: "/prices", label: dict.footer.pricesLink },
@@ -30,7 +42,7 @@ export function MobileNav({
   ];
 
   return (
-    <div className="lg:hidden">
+    <div ref={containerRef} className="lg:hidden">
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}

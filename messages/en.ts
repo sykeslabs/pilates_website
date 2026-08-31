@@ -146,6 +146,8 @@ export const en = {
     confirmedOn: "on",
     confirmedAt: "at",
     confirmedFooter: "We've got your details ({email}) — see you on the mat!",
+    emailConfirmationNote: "You'll receive a confirmation email in the next few minutes.",
+    downloadIcsAction: "Add to calendar (.ics)",
   },
   adminLogin: {
     heading: "Studio login",

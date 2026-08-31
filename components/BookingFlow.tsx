@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { notifyBooking, notifyWaitlistJoin } from "@/app/actions/booking";
 import { courseName } from "@/lib/i18n/content";
 import { localeTags, type Locale } from "@/lib/i18n/config";
+import { downloadIcsFile } from "@/lib/ics";
 import type { Dictionary } from "@/messages/en";
 import type { AvailabilitySlot, CourseType } from "@/lib/types";
 
@@ -198,9 +199,29 @@ export function BookingFlow({
     setConfirmed(true);
   }
 
+  useEffect(() => {
+    if (confirmed && typeof window !== "undefined" && window.matchMedia("(max-width: 639px)").matches) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [confirmed]);
+
+  function handleDownloadIcs() {
+    const confirmedBookings = bookingResults.filter((r) => !r.waitlisted);
+    downloadIcsFile(
+      "booking.ics",
+      confirmedBookings.map((r) => ({
+        uid: r.slot.id,
+        title: courseName(r.course, locale),
+        start: r.slot.start_time,
+        end: r.slot.end_time,
+      })),
+    );
+  }
+
   if (confirmed && bookingResults.length > 0) {
     const allWaitlisted = bookingResults.every((r) => r.waitlisted);
     const anyWaitlisted = bookingResults.some((r) => r.waitlisted);
+    const hasConfirmedBookings = bookingResults.some((r) => !r.waitlisted);
     return (
       <div className="rounded-2xl border border-sage-100 bg-white p-8 text-center shadow-sm">
         <h2 className="text-2xl font-semibold text-charcoal">
@@ -229,6 +250,16 @@ export function BookingFlow({
             email,
           )}
         </p>
+        <p className="mt-1 text-sm text-charcoal/60">{dict.book.emailConfirmationNote}</p>
+        {hasConfirmedBookings && (
+          <button
+            type="button"
+            onClick={handleDownloadIcs}
+            className="mt-5 inline-flex items-center justify-center rounded-full border border-sage-100 px-6 py-2.5 text-sm font-medium text-charcoal transition hover:border-sage-300"
+          >
+            {dict.book.downloadIcsAction}
+          </button>
+        )}
         {partialFailureCount > 0 && (
           <p className="mt-3 text-sm text-red-600">{dict.book.genericBookError}</p>
         )}

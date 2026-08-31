@@ -56,7 +56,7 @@ export default async function HomePage() {
   return (
     <div>
       {heroLayout === "collage" ? (
-        <section className="sticky top-0 z-10 flex min-h-screen items-center bg-cream px-6">
+        <section className="flex items-center bg-cream px-6 lg:sticky lg:top-0 lg:z-10 lg:min-h-screen">
           <div className="mx-auto grid w-full max-w-6xl items-center gap-16 py-24 lg:grid-cols-2">
             <div className="order-2 lg:order-1">
               <HeroPhotoCollage photos={heroPhotos} />
@@ -75,7 +75,7 @@ export default async function HomePage() {
         </section>
       ) : (
         <section
-          className="sticky top-0 z-10 flex min-h-screen items-center justify-center bg-cover bg-center px-6 text-center"
+          className="flex items-center justify-center bg-cover bg-center px-6 py-24 text-center lg:sticky lg:top-0 lg:z-10 lg:min-h-screen lg:py-0"
           style={{
             backgroundImage:
               heroLayout === "single_photo"
@@ -104,7 +104,7 @@ export default async function HomePage() {
 
       <section
         id="courses"
-        className="sticky top-16 z-20 flex min-h-screen flex-col justify-center bg-cream px-6 py-20"
+        className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-20 lg:min-h-screen"
       >
         <div className="mx-auto w-full max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
@@ -134,7 +134,7 @@ export default async function HomePage() {
       {stories && stories.length > 0 && (
         <section
           id="stories"
-          className="sticky top-16 z-30 flex min-h-screen flex-col justify-center bg-cream px-6 py-20"
+          className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-30 lg:min-h-screen"
         >
           <div className="mx-auto w-full max-w-6xl">
             <div className="mx-auto max-w-2xl text-center">
@@ -162,7 +162,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="sticky top-16 z-40 flex min-h-screen flex-col justify-center bg-sage-50 px-6 py-20">
+      <section className="flex flex-col justify-center bg-sage-50 px-6 py-20 lg:sticky lg:top-16 lg:z-40 lg:min-h-screen">
         <div className="mx-auto w-full max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
             {dict.home.stepsEyebrow}

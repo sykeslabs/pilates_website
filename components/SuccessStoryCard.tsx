@@ -1,10 +1,16 @@
 import Image from "next/image";
 import { storyQuote, storyTitle } from "@/lib/i18n/content";
 import { InstagramEmbed } from "@/components/InstagramEmbed";
-import type { Locale } from "@/lib/i18n/config";
+import { localeTags, type Locale } from "@/lib/i18n/config";
 import type { SuccessStory } from "@/lib/types";
 
 export function SuccessStoryCard({ story, locale }: { story: SuccessStory; locale: Locale }) {
+  const submittedDate = new Intl.DateTimeFormat(localeTags[locale], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(story.created_at));
+
   return (
     <figure className="flex h-full flex-col gap-4 rounded-2xl border border-sage-100 bg-white p-6 shadow-sm">
       <div className="flex-1">
@@ -25,7 +31,10 @@ export function SuccessStoryCard({ story, locale }: { story: SuccessStory; local
             <Image src={story.photo_url} alt={story.name} fill className="object-cover" sizes="40px" />
           )}
         </div>
-        <span className="text-sm font-medium text-charcoal">{story.name}</span>
+        <div>
+          <span className="block text-sm font-medium text-charcoal">{story.name}</span>
+          <span className="block text-xs text-charcoal/50">{submittedDate}</span>
+        </div>
       </figcaption>
     </figure>
   );

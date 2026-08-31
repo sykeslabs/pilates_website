@@ -127,7 +127,7 @@ export default async function ContactPage() {
             </a>
           )}
         </div>
-        <div className="mx-auto mt-8 max-w-md rounded-2xl bg-white p-6 sm:p-8">
+        <div className="mx-auto mt-8 max-w-md rounded-2xl bg-white p-6 text-charcoal sm:p-8">
           <ContactForm dict={dict} />
         </div>
       </div>
