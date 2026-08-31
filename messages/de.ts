@@ -76,7 +76,12 @@ export const de: Dictionary = {
     priceColumn: "Preis",
   },
   aboutPage: {
-    heading: "Über deine Instruktorin",
+    eyebrow: "Lern sie kennen",
+    heading: "Der Mensch hinter dem Training",
+    subheading: "Zertifiziert, herzlich und mit echter Leidenschaft für gute Bewegung.",
+    ctaHeading: "Bereit, den Unterschied zu spüren?",
+    ctaBody: "Dein erster Kurs ist nur einen Klick entfernt — kleine Gruppen, echte Aufmerksamkeit, echte Ergebnisse.",
+    ctaButton: "Jetzt Kurs buchen",
   },
   faqPage: {
     heading: "Häufig gestellte Fragen",

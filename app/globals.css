@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
 
   --color-cream: #f6f1ea;
   --color-sand: #faf7f2;
@@ -54,4 +55,14 @@ body {
   list-style: decimal;
   padding-left: 1.25rem;
   margin-bottom: 0.75rem;
+}
+.rich-content p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 3rem;
+  line-height: 1;
+  float: left;
+  padding-right: 0.4rem;
+  color: var(--color-sage-700);
 }

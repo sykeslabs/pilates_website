@@ -224,58 +224,101 @@ export function BookingFlow({
               <p className="text-sm text-charcoal/60">{dict.book.noTimes}</p>
             )}
             {!slotsError && slots !== null && slots.length > 0 && (
-              <div className="overflow-x-auto rounded-2xl border border-sage-100">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-sage-50 text-charcoal/70">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{dict.book.dateColumn}</th>
-                      <th className="px-4 py-3 font-medium">{dict.book.timeColumn}</th>
-                      <th className="px-4 py-3 font-medium">{dict.book.spotsColumn}</th>
-                      <th className="px-4 py-3" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {slots.map((slot) => {
-                      const isFull = slot.booked_count >= slot.capacity;
-                      return (
-                        <tr
-                          key={slot.id}
-                          className={`border-t border-sage-100 ${
-                            selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"
-                          }`}
-                        >
-                          <td className="px-4 py-3 text-charcoal">
-                            {dateFormatter.format(new Date(slot.start_time))}
-                          </td>
-                          <td className="px-4 py-3 text-charcoal">
-                            {timeFormatter.format(new Date(slot.start_time))}
-                          </td>
-                          <td className="px-4 py-3 text-charcoal/70">
+              <>
+                <div className="divide-y divide-sage-100 rounded-2xl border border-sage-100 sm:hidden">
+                  {slots.map((slot) => {
+                    const isFull = slot.booked_count >= slot.capacity;
+                    return (
+                      <div
+                        key={slot.id}
+                        className={`p-4 ${selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"}`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <div className="font-medium text-charcoal">
+                              {dateFormatter.format(new Date(slot.start_time))}
+                            </div>
+                            <div className="text-sm text-charcoal/70">
+                              {timeFormatter.format(new Date(slot.start_time))}
+                            </div>
+                          </div>
+                          <div className="shrink-0 text-sm text-charcoal/70">
                             {isFull
                               ? dict.book.fullBadge
                               : `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <button
-                              type="button"
-                              onClick={() => selectSlot(slot, isFull)}
-                              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                                selectedSlot?.id === slot.id
-                                  ? "bg-sage-700 text-white"
-                                  : isFull
-                                    ? "border border-sage-100 text-charcoal/60 hover:border-sage-300"
-                                    : "border border-sage-100 text-charcoal hover:border-sage-300"
-                              }`}
-                            >
-                              {isFull ? dict.book.joinWaitlistAction : dict.book.bookAction}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => selectSlot(slot, isFull)}
+                          className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-medium transition ${
+                            selectedSlot?.id === slot.id
+                              ? "bg-sage-700 text-white"
+                              : isFull
+                                ? "border border-sage-100 text-charcoal/60 hover:border-sage-300"
+                                : "border border-sage-100 text-charcoal hover:border-sage-300"
+                          }`}
+                        >
+                          {isFull ? dict.book.joinWaitlistAction : dict.book.bookAction}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="hidden overflow-x-auto rounded-2xl border border-sage-100 sm:block">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-sage-50 text-charcoal/70">
+                      <tr>
+                        <th className="px-4 py-3 font-medium">{dict.book.dateColumn}</th>
+                        <th className="px-4 py-3 font-medium">{dict.book.timeColumn}</th>
+                        <th className="px-4 py-3 font-medium">{dict.book.spotsColumn}</th>
+                        <th className="px-4 py-3" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {slots.map((slot) => {
+                        const isFull = slot.booked_count >= slot.capacity;
+                        return (
+                          <tr
+                            key={slot.id}
+                            className={`border-t border-sage-100 ${
+                              selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"
+                            }`}
+                          >
+                            <td className="px-4 py-3 text-charcoal">
+                              {dateFormatter.format(new Date(slot.start_time))}
+                            </td>
+                            <td className="px-4 py-3 text-charcoal">
+                              {timeFormatter.format(new Date(slot.start_time))}
+                            </td>
+                            <td className="px-4 py-3 text-charcoal/70">
+                              {isFull
+                                ? dict.book.fullBadge
+                                : `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <button
+                                type="button"
+                                onClick={() => selectSlot(slot, isFull)}
+                                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                                  selectedSlot?.id === slot.id
+                                    ? "bg-sage-700 text-white"
+                                    : isFull
+                                      ? "border border-sage-100 text-charcoal/60 hover:border-sage-300"
+                                      : "border border-sage-100 text-charcoal hover:border-sage-300"
+                                }`}
+                              >
+                                {isFull ? dict.book.joinWaitlistAction : dict.book.bookAction}
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         </div>

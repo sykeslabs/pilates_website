@@ -25,7 +25,35 @@ export default async function PricesPage() {
         </h1>
         <p className="mt-3 text-charcoal/70">{dict.pricesPage.subheading}</p>
       </div>
-      <div className="mt-12 overflow-hidden rounded-2xl border border-sage-100 bg-white">
+      <div className="mt-12 divide-y divide-sage-100 rounded-2xl border border-sage-100 bg-white sm:hidden">
+        {courses?.map((course) => (
+          <div key={course.id} className="p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="font-medium text-charcoal">{courseName(course, locale)}</div>
+              <div className="shrink-0 text-sm text-sage-700">
+                {course.price_chf != null
+                  ? `CHF ${course.price_chf.toFixed(2)} ${
+                      course.class_type === "private"
+                        ? dict.common.perSession
+                        : dict.common.perPerson
+                    }`
+                  : "—"}
+              </div>
+            </div>
+            <div className="mt-1 text-sm text-charcoal/70">
+              {course.duration_minutes} {dict.common.minutesShort}
+            </div>
+            <Link
+              href={`/book?course=${course.slug}`}
+              className="mt-3 block w-full rounded-full border border-sage-100 px-4 py-2 text-center text-sm font-medium text-charcoal transition hover:border-sage-300"
+            >
+              {dict.courseCard.checkAvailability}
+            </Link>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-12 hidden overflow-hidden rounded-2xl border border-sage-100 bg-white sm:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-sage-50 text-charcoal/70">
             <tr>

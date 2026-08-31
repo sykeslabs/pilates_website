@@ -68,7 +68,12 @@ export const en = {
     priceColumn: "Price",
   },
   aboutPage: {
-    heading: "About your instructor",
+    eyebrow: "Meet your instructor",
+    heading: "The person behind the practice",
+    subheading: "Certified, warm, and a little obsessed with good movement.",
+    ctaHeading: "Ready to feel the difference?",
+    ctaBody: "Your first class is one click away — small groups, real attention, real results.",
+    ctaButton: "Book your class",
   },
   faqPage: {
     heading: "Frequently asked questions",
