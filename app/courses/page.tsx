@@ -50,7 +50,7 @@ export default async function CoursesPage() {
 
   return (
     <div>
-      <section className="sticky top-16 z-10 flex min-h-screen flex-col justify-center bg-cream px-6 py-20">
+      <section className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-10 lg:min-h-screen">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-16 lg:grid-cols-2">
           <div className="relative order-2 mx-auto aspect-square w-full max-w-sm lg:order-1">
             <div className="absolute left-0 top-4 h-40 w-40 -rotate-6 overflow-hidden rounded-2xl shadow-lg sm:h-48 sm:w-48">
@@ -113,10 +113,10 @@ export default async function CoursesPage() {
       {courses?.map((course, i) => (
         <section
           key={course.id}
-          className={`sticky flex min-h-screen flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 ${
+          className={`flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 lg:sticky lg:top-16 lg:min-h-screen ${
             i % 2 === 0 ? "bg-sand" : "bg-sage-50"
           }`}
-          style={{ top: "4rem", zIndex: 20 + i * 10 }}
+          style={{ zIndex: 20 + i * 10 }}
         >
           <CourseDetailCard
             course={course}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import sanitizeHtml from "sanitize-html";
+import { PhotoSlider } from "@/components/PhotoSlider";
 import { createClient } from "@/lib/supabase/server";
 import { instructorBio, instructorCredentials } from "@/lib/i18n/content";
 import { getLocale } from "@/lib/i18n/getLocale";
@@ -30,6 +31,10 @@ export default async function AboutPage() {
       ].filter((url): url is string => Boolean(url))
     : [];
 
+  const allPhotos = instructor
+    ? [instructor.photo_url, ...galleryPhotos].filter((url): url is string => Boolean(url))
+    : [];
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
       <div className="text-center">
@@ -42,52 +47,59 @@ export default async function AboutPage() {
         <p className="mx-auto mt-4 max-w-md text-charcoal/70">{dict.aboutPage.subheading}</p>
       </div>
       {instructor && (
-        <div className="mt-12 grid gap-8 sm:grid-cols-[220px_1fr]">
-          <div className="space-y-4">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-sage-50">
-              {instructor.photo_url && (
-                <Image
-                  src={instructor.photo_url}
-                  alt={instructor.name}
-                  fill
-                  className="object-cover"
-                  sizes="220px"
-                />
-              )}
+        <>
+          {allPhotos.length > 0 && (
+            <div className="mt-12 sm:hidden">
+              <PhotoSlider photos={allPhotos} />
             </div>
-            {galleryPhotos.map((src) => (
-              <div
-                key={src}
-                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-sage-50"
-              >
-                <Image src={src} alt="" fill className="object-cover" sizes="220px" />
+          )}
+          <div className="mt-8 grid gap-8 sm:mt-12 sm:grid-cols-[220px_1fr]">
+            <div className="hidden space-y-4 sm:block">
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-sage-50">
+                {instructor.photo_url && (
+                  <Image
+                    src={instructor.photo_url}
+                    alt={instructor.name}
+                    fill
+                    className="object-cover"
+                    sizes="220px"
+                  />
+                )}
               </div>
-            ))}
+              {galleryPhotos.map((src) => (
+                <div
+                  key={src}
+                  className="relative aspect-square w-full overflow-hidden rounded-2xl bg-sage-50"
+                >
+                  <Image src={src} alt="" fill className="object-cover" sizes="220px" />
+                </div>
+              ))}
+            </div>
+            <div className="relative rounded-2xl border border-sage-100 bg-white p-6 sm:p-8">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -top-6 left-6 font-[family-name:var(--font-display)] text-7xl italic text-sage-100 sm:-top-8 sm:text-8xl"
+              >
+                &ldquo;
+              </span>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-charcoal sm:text-3xl">
+                {instructor.name}
+              </h2>
+              <p className="mt-2 inline-block rounded-full bg-sage-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sage-700">
+                {instructorCredentials(instructor, locale)}
+              </p>
+              <div
+                className="rich-content mt-5 whitespace-pre-line text-lg leading-relaxed text-charcoal/80"
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(instructorBio(instructor, locale), {
+                    allowedTags: ["p", "br", "strong", "em", "ul", "ol", "li"],
+                    allowedAttributes: {},
+                  }),
+                }}
+              />
+            </div>
           </div>
-          <div className="relative rounded-2xl border border-sage-100 bg-white p-6 sm:p-8">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -top-6 left-6 font-[family-name:var(--font-display)] text-7xl italic text-sage-100 sm:-top-8 sm:text-8xl"
-            >
-              &ldquo;
-            </span>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-charcoal sm:text-3xl">
-              {instructor.name}
-            </h2>
-            <p className="mt-2 inline-block rounded-full bg-sage-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sage-700">
-              {instructorCredentials(instructor, locale)}
-            </p>
-            <div
-              className="rich-content mt-5 whitespace-pre-line text-lg leading-relaxed text-charcoal/80"
-              dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(instructorBio(instructor, locale), {
-                  allowedTags: ["p", "br", "strong", "em", "ul", "ol", "li"],
-                  allowedAttributes: {},
-                }),
-              }}
-            />
-          </div>
-        </div>
+        </>
       )}
 
       <div className="mt-16 rounded-3xl bg-sage-700 px-8 py-12 text-center text-cream">
