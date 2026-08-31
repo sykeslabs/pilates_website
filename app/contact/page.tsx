@@ -112,9 +112,22 @@ export default async function ContactPage() {
         </div>
       )}
 
-      <div className="mt-12 rounded-2xl border border-sage-100 bg-white p-6">
-        <h2 className="text-xl font-semibold text-charcoal">{dict.contactPage.formHeading}</h2>
-        <div className="mt-4">
+      <div className="mt-12 rounded-3xl bg-sage-700 px-8 py-12 text-cream">
+        <div className="text-center">
+          <h2 className="font-[family-name:var(--font-display)] text-3xl italic sm:text-4xl">
+            {dict.contactPage.formHeading}
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-cream/85">{dict.faqPage.contactBody}</p>
+          {studio?.phone && (
+            <a
+              href={`tel:${studio.phone}`}
+              className="mt-3 inline-block text-lg font-semibold text-cream hover:underline"
+            >
+              {studio.phone}
+            </a>
+          )}
+        </div>
+        <div className="mx-auto mt-8 max-w-md rounded-2xl bg-white p-6 sm:p-8">
           <ContactForm dict={dict} />
         </div>
       </div>

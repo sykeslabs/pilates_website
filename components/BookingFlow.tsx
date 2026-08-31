@@ -126,6 +126,7 @@ export function BookingFlow({
     const supabase = createClient();
     const succeeded: BookingResult[] = [];
     let failedCount = 0;
+    let firstErrorMessage: string | null = null;
 
     for (const slot of selectedSlots) {
       const course = courses.find((c) => c.id === slot.course_type_id);
@@ -145,6 +146,8 @@ export function BookingFlow({
         });
         if (error) {
           failedCount += 1;
+          firstErrorMessage ??= error.message || null;
+          console.error("waitlist insert failed", error);
           continue;
         }
         notifyWaitlistJoin({
@@ -165,6 +168,8 @@ export function BookingFlow({
         });
         if (error) {
           failedCount += 1;
+          firstErrorMessage ??= error.message || null;
+          console.error("book_slot failed", error);
           continue;
         }
         // The booking is already confirmed at this point — email is a
@@ -184,7 +189,7 @@ export function BookingFlow({
     setSubmitting(false);
 
     if (succeeded.length === 0) {
-      setSubmitError(dict.book.genericBookError);
+      setSubmitError(firstErrorMessage || dict.book.genericBookError);
       return;
     }
 

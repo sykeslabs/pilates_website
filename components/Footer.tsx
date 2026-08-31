@@ -12,6 +12,9 @@ export function Footer({ dict }: { dict: Dictionary }) {
           <Link href="/prices" className="hover:text-sage-700">
             {dict.footer.pricesLink}
           </Link>
+          <Link href="/stories" className="hover:text-sage-700">
+            {dict.header.stories}
+          </Link>
           <Link href="/about" className="hover:text-sage-700">
             {dict.footer.aboutLink}
           </Link>
@@ -20,9 +23,6 @@ export function Footer({ dict }: { dict: Dictionary }) {
           </Link>
           <Link href="/contact" className="hover:text-sage-700">
             {dict.footer.contactLink}
-          </Link>
-          <Link href="/#stories" className="hover:text-sage-700">
-            {dict.header.stories}
           </Link>
         </nav>
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

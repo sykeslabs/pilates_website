@@ -26,18 +26,22 @@ export const fr: Dictionary = {
     classTypeSemiPrivate: "Semi-privé",
   },
   home: {
+    heroEyebrow: "Bienvenue au studio",
     heroTitle: "Le Pilates qui s'adapte à votre vie",
     heroSubtitle:
       "Mat, Reformer, Prénatal et séances privées — consultez les disponibilités et réservez votre place en moins d'une minute.",
     heroCta: "Réserver un cours",
-    coursesHeading: "Nos cours",
+    coursesEyebrow: "Trouvez votre cours",
+    coursesHeading: "Aperçu des cours",
     coursesSubheading: "Des cours en petit groupe, pour une vraie attention à chaque niveau.",
+    stepsEyebrow: "Aussi simple que ça",
     stepsHeading: "Réserver en trois étapes",
     steps: [
       { title: "Choisissez un cours", body: "Sélectionnez le type de cours qui vous convient." },
       { title: "Choisissez un horaire", body: "Ne voyez que les créneaux réellement disponibles." },
       { title: "Confirmez", body: "Indiquez vos coordonnées, votre place est réservée immédiatement." },
     ],
+    storiesEyebrow: "De vrais résultats",
     storiesHeading: "Témoignages",
     storiesSubheading: "De vrais progrès de nos participantes et participants.",
   },
@@ -76,6 +80,12 @@ export const fr: Dictionary = {
     courseColumn: "Cours",
     durationColumn: "Durée",
     priceColumn: "Prix",
+  },
+  storiesPage: {
+    eyebrow: "De vrais résultats",
+    heading: "Témoignages",
+    subheading: "De vrais progrès de nos participantes et participants, dans leurs propres mots.",
+    seeAll: "Voir tous les témoignages",
   },
   aboutPage: {
     eyebrow: "Faites connaissance",

@@ -23,7 +23,8 @@ export default async function HomePage() {
     supabase
       .from("success_stories")
       .select("*")
-      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(7)
       .returns<SuccessStory[]>(),
     supabase.from("hero_section").select("*").limit(1).maybeSingle<HeroSection>(),
   ]);
@@ -61,7 +62,10 @@ export default async function HomePage() {
               <HeroPhotoCollage photos={heroPhotos} />
             </div>
             <div className="order-1 text-center lg:order-2 lg:text-left">
-              <h1 className="text-4xl font-semibold tracking-tight text-charcoal sm:text-5xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+                {dict.home.heroEyebrow}
+              </p>
+              <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl italic tracking-tight text-charcoal sm:text-5xl">
                 {dict.home.heroTitle}
               </h1>
               <p className="mt-4 text-lg text-charcoal/70">{dict.home.heroSubtitle}</p>
@@ -81,7 +85,10 @@ export default async function HomePage() {
         >
           {heroLayout === "single_photo" && <div className="absolute inset-0 bg-black/30" />}
           <div className="relative max-w-2xl">
-            <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">
+              {dict.home.heroEyebrow}
+            </p>
+            <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl italic tracking-tight text-white sm:text-5xl">
               {dict.home.heroTitle}
             </h1>
             <p className="mt-4 text-lg text-white/90">{dict.home.heroSubtitle}</p>
@@ -101,10 +108,13 @@ export default async function HomePage() {
       >
         <div className="mx-auto w-full max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight text-charcoal">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+              {dict.home.coursesEyebrow}
+            </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl italic tracking-tight text-charcoal sm:text-4xl">
               {dict.home.coursesHeading}
             </h2>
-            <p className="mt-3 text-charcoal/70">{dict.home.coursesSubheading}</p>
+            <p className="mt-4 text-charcoal/70">{dict.home.coursesSubheading}</p>
           </div>
           <div className="mt-12">
             <Carousel previousLabel={dict.common.previous} nextLabel={dict.common.next}>
@@ -128,10 +138,13 @@ export default async function HomePage() {
         >
           <div className="mx-auto w-full max-w-6xl">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-charcoal">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+                {dict.home.storiesEyebrow}
+              </p>
+              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl italic tracking-tight text-charcoal sm:text-4xl">
                 {dict.home.storiesHeading}
               </h2>
-              <p className="mt-3 text-charcoal/70">{dict.home.storiesSubheading}</p>
+              <p className="mt-4 text-charcoal/70">{dict.home.storiesSubheading}</p>
             </div>
             <div className="mt-12">
               <Carousel previousLabel={dict.common.previous} nextLabel={dict.common.next}>
@@ -140,13 +153,21 @@ export default async function HomePage() {
                 ))}
               </Carousel>
             </div>
+            <div className="mt-8 text-center">
+              <Link href="/stories" className="text-sm font-medium text-sage-700 hover:underline">
+                {dict.storiesPage.seeAll}
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
       <section className="sticky top-16 z-40 flex min-h-screen flex-col justify-center bg-sage-50 px-6 py-20">
         <div className="mx-auto w-full max-w-4xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-charcoal">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+            {dict.home.stepsEyebrow}
+          </p>
+          <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl italic tracking-tight text-charcoal sm:text-4xl">
             {dict.home.stepsHeading}
           </h2>
           <div className="mt-12 grid grid-cols-1 gap-8 text-left sm:grid-cols-3">

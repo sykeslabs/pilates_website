@@ -97,12 +97,12 @@ export function CourseDetailCard({
           {upcomingSlots.length === 0 ? (
             <p className="mt-3 text-sm text-charcoal/60">{dict.coursesPage.noUpcoming}</p>
           ) : (
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               {upcomingSlots.map((slot) => (
                 <Link
                   key={slot.id}
                   href={`/book?course=${course.slug}`}
-                  className="rounded-full border border-sage-100 px-4 py-2 text-sm text-charcoal transition hover:border-sage-300 hover:bg-sage-50"
+                  className="rounded-full border border-sage-100 px-4 py-2 text-center text-sm text-charcoal transition hover:border-sage-300 hover:bg-sage-50"
                 >
                   {dateFormatter.format(new Date(slot.start_time))} ·{" "}
                   {timeFormatter.format(new Date(slot.start_time))}

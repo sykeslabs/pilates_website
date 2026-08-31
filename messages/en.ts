@@ -24,18 +24,22 @@ export const en = {
     classTypeSemiPrivate: "Semi-private",
   },
   home: {
+    heroEyebrow: "Welcome to the studio",
     heroTitle: "Pilates that fits your life",
     heroSubtitle:
       "Mat, Reformer, Prenatal and Private sessions — see what's available and book your spot in under a minute.",
     heroCta: "Book a class",
-    coursesHeading: "Our courses",
+    coursesEyebrow: "Find your class",
+    coursesHeading: "Course Overview",
     coursesSubheading: "Every class is small enough for real attention, whatever your level.",
+    stepsEyebrow: "Simple as that",
     stepsHeading: "Booking in three steps",
     steps: [
       { title: "Pick a course", body: "Choose the class type that fits you." },
       { title: "Pick a time", body: "See only the times that are actually free." },
       { title: "Confirm", body: "Enter your details and your spot is booked instantly." },
     ],
+    storiesEyebrow: "Real results",
     storiesHeading: "Success stories",
     storiesSubheading: "Real progress from real participants.",
   },
@@ -69,6 +73,12 @@ export const en = {
     durationColumn: "Duration",
     priceColumn: "Price",
   },
+  storiesPage: {
+    eyebrow: "Real results",
+    heading: "Success stories",
+    subheading: "Real progress from real participants, in their own words.",
+    seeAll: "See all stories",
+  },
   aboutPage: {
     eyebrow: "Meet your instructor",
     heading: "The person behind the practice",
@@ -86,7 +96,7 @@ export const en = {
   },
   contactPage: {
     eyebrow: "Say hello",
-    heading: "Contact & location",
+    heading: "Contact & Location",
     subheading: "Questions, special requests, or just want to say hi?",
     addressLabel: "Address",
     phoneLabel: "Phone",

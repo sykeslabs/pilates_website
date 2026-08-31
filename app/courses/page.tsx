@@ -117,7 +117,7 @@ export default async function CoursesPage() {
         <section
           key={course.id}
           className={`flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 lg:sticky lg:top-16 lg:min-h-screen ${
-            i % 2 === 0 ? "bg-sand" : "bg-sage-50"
+            i % 2 === 0 ? "bg-sand" : "bg-cream"
           }`}
           style={{ zIndex: 20 + i * 10 }}
         >

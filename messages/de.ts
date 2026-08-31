@@ -26,18 +26,22 @@ export const de: Dictionary = {
     classTypeSemiPrivate: "Halbprivat",
   },
   home: {
+    heroEyebrow: "Willkommen im Studio",
     heroTitle: "Pilates, das zu deinem Leben passt",
     heroSubtitle:
       "Mat, Reformer, Prenatal und Privatstunden — sieh dir die freien Termine an und buche deinen Platz in unter einer Minute.",
     heroCta: "Kurs buchen",
-    coursesHeading: "Unsere Kurse",
+    coursesEyebrow: "Finde deinen Kurs",
+    coursesHeading: "Kursübersicht",
     coursesSubheading: "Jede Klasse ist klein genug für echte Aufmerksamkeit, egal auf welchem Niveau.",
+    stepsEyebrow: "So einfach geht's",
     stepsHeading: "Buchen in drei Schritten",
     steps: [
       { title: "Kurs wählen", body: "Wähle den Kurstyp, der zu dir passt." },
       { title: "Zeit wählen", body: "Sieh nur die Termine, die wirklich frei sind." },
       { title: "Bestätigen", body: "Gib deine Daten ein — dein Platz ist sofort gebucht." },
     ],
+    storiesEyebrow: "Echte Ergebnisse",
     storiesHeading: "Erfolgsgeschichten",
     storiesSubheading: "Echte Fortschritte von echten Teilnehmerinnen und Teilnehmern.",
   },
@@ -76,6 +80,12 @@ export const de: Dictionary = {
     courseColumn: "Kurs",
     durationColumn: "Dauer",
     priceColumn: "Preis",
+  },
+  storiesPage: {
+    eyebrow: "Echte Ergebnisse",
+    heading: "Erfolgsgeschichten",
+    subheading: "Echte Fortschritte von echten Teilnehmerinnen und Teilnehmern, in ihren eigenen Worten.",
+    seeAll: "Alle Erfolgsgeschichten ansehen",
   },
   aboutPage: {
     eyebrow: "Lern sie kennen",

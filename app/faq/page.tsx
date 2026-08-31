@@ -45,18 +45,22 @@ export default async function FaqPage() {
         ))}
       </div>
 
-      <div className="mt-16 rounded-2xl border border-sage-100 bg-sage-50 p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-charcoal">{dict.faqPage.contactHeading}</h2>
-        <p className="mt-2 text-charcoal/70">{dict.faqPage.contactBody}</p>
-        {studio?.phone && (
-          <a
-            href={`tel:${studio.phone}`}
-            className="mt-3 inline-block text-lg font-semibold text-sage-700 hover:underline"
-          >
-            {studio.phone}
-          </a>
-        )}
-        <div className="mt-6">
+      <div className="mt-16 rounded-3xl bg-sage-700 px-8 py-12 text-cream">
+        <div className="text-center">
+          <h2 className="font-[family-name:var(--font-display)] text-3xl italic sm:text-4xl">
+            {dict.faqPage.contactHeading}
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-cream/85">{dict.faqPage.contactBody}</p>
+          {studio?.phone && (
+            <a
+              href={`tel:${studio.phone}`}
+              className="mt-3 inline-block text-lg font-semibold text-cream hover:underline"
+            >
+              {studio.phone}
+            </a>
+          )}
+        </div>
+        <div className="mx-auto mt-8 max-w-md rounded-2xl bg-white p-6 sm:p-8">
           <ContactForm dict={dict} />
         </div>
       </div>
