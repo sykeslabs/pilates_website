@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { getLocale } from "@/lib/i18n/getLocale";
+import { getDictionary } from "@/lib/i18n/getDictionary";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,16 +22,19 @@ export const metadata: Metadata = {
     "Mat, Reformer, Prenatal and Private Pilates classes — browse courses and book your spot online.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Header />
+        <Header locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer dict={dict} />
       </body>
     </html>
   );

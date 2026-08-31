@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
         ]
       : [],
   },
+  // Allows Next.js dev resources to load properly via the WSL network bridge
+  allowedDevOrigins: ['172.18.64.1'],
 };
 
 export default nextConfig;

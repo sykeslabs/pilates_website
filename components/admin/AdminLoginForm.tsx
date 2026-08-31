@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { Dictionary } from "@/messages/en";
 
-export function AdminLoginForm() {
+export function AdminLoginForm({ dict }: { dict: Dictionary["adminLogin"] }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +23,7 @@ export function AdminLoginForm() {
     setLoading(false);
 
     if (error) {
-      setError("Incorrect email or password.");
+      setError(dict.error);
       return;
     }
 
@@ -34,7 +35,7 @@ export function AdminLoginForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-charcoal">
-          Email
+          {dict.emailLabel}
         </label>
         <input
           id="email"
@@ -47,7 +48,7 @@ export function AdminLoginForm() {
       </div>
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-charcoal">
-          Password
+          {dict.passwordLabel}
         </label>
         <input
           id="password"
@@ -64,7 +65,7 @@ export function AdminLoginForm() {
         disabled={loading}
         className="w-full rounded-full bg-sage-700 px-4 py-3 font-medium text-white transition hover:bg-sage-500 disabled:opacity-60"
       >
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? dict.submitting : dict.submit}
       </button>
     </form>
   );

@@ -27,3 +27,31 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Renders rich-text content saved by RichTextEditor (admin) — used both in
+   the editor itself and wherever that HTML is displayed publicly, so the
+   two always look consistent. Tailwind's preflight strips list/emphasis
+   defaults, so they're restored here explicitly rather than pulling in the
+   typography plugin for this one field. */
+.rich-content p {
+  margin-bottom: 0.75rem;
+}
+.rich-content p:last-child {
+  margin-bottom: 0;
+}
+.rich-content strong {
+  font-weight: 600;
+}
+.rich-content em {
+  font-style: italic;
+}
+.rich-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.rich-content ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}

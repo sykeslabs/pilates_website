@@ -14,6 +14,9 @@ everything runs as one app on Vercel.
 1. Go to [supabase.com](https://supabase.com), create a free account and a new project.
 2. In the project, open **SQL Editor** and run, in order:
    - the contents of `supabase/migrations/0001_init.sql`
+   - the contents of `supabase/migrations/0002_i18n.sql` (adds German/French
+     content columns — only needed once; a brand-new project can run this
+     right after `0001_init.sql`, before seeding)
    - the contents of `supabase/seed.sql` (placeholder courses, success stories, and a
      few weeks of sample availability, so the site isn't empty on first run)
 3. Create the studio owner's login: **Authentication -> Users -> Add user**,
@@ -83,6 +86,14 @@ created in step 1 to manage courses, availability, and bookings.
 - The admin dashboard (`/admin/dashboard`) manages course types (with photo
   upload), opens/hides availability slots (including "repeat weekly"), and
   lists/cancels bookings.
+
+## Languages
+
+The home page, `/book`, and the `/admin` login screen are available in
+English, German and French (selector in the header). The admin *dashboard*
+itself stays English-only, but its Course/Success story forms have separate
+German and French fields — leaving those blank just falls back to the
+English text on the public site, so translating is optional, not required.
 
 ## What's next (not built yet)
 

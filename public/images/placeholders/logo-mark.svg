@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 290" role="img" aria-label="Studio Pilates">
+  <g stroke="#425046" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="70" cy="40" r="34" fill="#425046" stroke="none"/>
+    <path d="M70 74 C30 94 10 135 20 180"/>
+    <path d="M70 74 C110 94 135 120 130 155"/>
+    <path d="M20 180 C15 225 30 260 60 280"/>
+    <path d="M130 155 C140 195 125 225 95 245"/>
+  </g>
+</svg>

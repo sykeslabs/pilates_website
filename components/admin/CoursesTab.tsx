@@ -3,6 +3,15 @@
 import { useState } from "react";
 import type { CourseType } from "@/lib/types";
 import { setCourseTypeActive, upsertCourseType } from "@/app/actions/admin";
+import { uploadPhoto } from "@/lib/uploadPhoto";
+
+function slugify(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 function CourseForm({
   course,
@@ -19,7 +28,16 @@ function CourseForm({
     setPending(true);
     setError(null);
     try {
-      await upsertCourseType(new FormData(e.currentTarget));
+      const formData = new FormData(e.currentTarget);
+      const photo = formData.get("photo");
+      formData.delete("photo");
+
+      if (photo instanceof File && photo.size > 0) {
+        const name = formData.get("name")?.toString().trim() || "course";
+        formData.set("photo_url", await uploadPhoto(photo, `courses/${slugify(name)}`));
+      }
+
+      await upsertCourseType(formData);
       onDone();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -28,28 +46,67 @@ function CourseForm({
     }
   }
 
+  const languages = [
+    { suffix: "", flag: "🇬🇧", label: "English", required: true },
+    { suffix: "_de", flag: "🇩🇪", label: "German", required: false },
+    { suffix: "_fr", flag: "🇫🇷", label: "French", required: false },
+  ] as const;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-sage-100 bg-white p-6">
       {course && <input type="hidden" name="id" value={course.id} />}
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Name</label>
-        <input
-          name="name"
-          required
-          defaultValue={course?.name}
-          className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Description</label>
-        <textarea
-          name="description"
-          rows={3}
-          defaultValue={course?.description}
-          className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {languages.map((lang) => (
+        <div key={lang.suffix} className="space-y-3 rounded-xl bg-sage-50/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-sage-700">
+            {lang.flag} {lang.label}
+            {!lang.required && <span className="font-normal text-charcoal/40"> (optional — falls back to English)</span>}
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">Name</label>
+            <input
+              name={`name${lang.suffix}`}
+              required={lang.required}
+              defaultValue={course?.[`name${lang.suffix}` as "name"]}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Brief description <span className="font-normal text-charcoal/40">(homepage)</span>
+            </label>
+            <input
+              name={`brief_description${lang.suffix}`}
+              required={lang.required}
+              defaultValue={course?.[`brief_description${lang.suffix}` as "brief_description"]}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Full description <span className="font-normal text-charcoal/40">(course details page)</span>
+            </label>
+            <textarea
+              name={`description${lang.suffix}`}
+              rows={3}
+              defaultValue={course?.[`description${lang.suffix}` as "description"]}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
+        </div>
+      ))}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div>
+          <label className="block text-sm font-medium text-charcoal">Class type</label>
+          <select
+            name="class_type"
+            defaultValue={course?.class_type ?? "group"}
+            className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+          >
+            <option value="group">Group</option>
+            <option value="private">Private</option>
+            <option value="semi_private">Semi-private</option>
+          </select>
+        </div>
         <div>
           <label className="block text-sm font-medium text-charcoal">Duration (min)</label>
           <input
@@ -95,6 +152,12 @@ function CourseForm({
         <p className="mt-1 text-xs text-charcoal/50">
           {course?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
         </p>
+        {course?.photo_url && (
+          <label className="mt-2 flex items-center gap-2 text-xs text-charcoal/60">
+            <input type="checkbox" name="remove_photo" />
+            Remove current photo
+          </label>
+        )}
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">
@@ -146,6 +209,13 @@ export function CoursesTab({ courses }: { courses: CourseType[] }) {
             <div>
               <div className="font-medium text-charcoal">
                 {course.name}
+                <span className="ml-2 rounded-full bg-sage-100 px-2 py-0.5 text-xs text-sage-700">
+                  {course.class_type === "private"
+                    ? "Private"
+                    : course.class_type === "semi_private"
+                      ? "Semi-private"
+                      : "Group"}
+                </span>
                 {!course.is_active && (
                   <span className="ml-2 rounded-full bg-charcoal/10 px-2 py-0.5 text-xs text-charcoal/60">
                     Hidden

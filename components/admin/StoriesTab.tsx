@@ -3,6 +3,15 @@
 import { useState } from "react";
 import type { CourseType, SuccessStory } from "@/lib/types";
 import { deleteSuccessStory, upsertSuccessStory } from "@/app/actions/admin";
+import { uploadPhoto } from "@/lib/uploadPhoto";
+
+function slugify(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 function StoryForm({
   story,
@@ -21,7 +30,16 @@ function StoryForm({
     setPending(true);
     setError(null);
     try {
-      await upsertSuccessStory(new FormData(e.currentTarget));
+      const formData = new FormData(e.currentTarget);
+      const photo = formData.get("photo");
+      formData.delete("photo");
+
+      if (photo instanceof File && photo.size > 0) {
+        const name = formData.get("name")?.toString().trim() || "story";
+        formData.set("photo_url", await uploadPhoto(photo, `stories/${slugify(name)}`));
+      }
+
+      await upsertSuccessStory(formData);
       onDone();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -42,16 +60,39 @@ function StoryForm({
           className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Quote</label>
-        <textarea
-          name="quote"
-          rows={3}
-          required
-          defaultValue={story?.quote}
-          className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
-        />
-      </div>
+      {(
+        [
+          { suffix: "", flag: "🇬🇧", label: "English", required: true },
+          { suffix: "_de", flag: "🇩🇪", label: "German", required: false },
+          { suffix: "_fr", flag: "🇫🇷", label: "French", required: false },
+        ] as const
+      ).map((lang) => (
+        <div key={lang.suffix} className="space-y-3 rounded-xl bg-sage-50/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-sage-700">
+            {lang.flag} {lang.label}
+            {!lang.required && <span className="font-normal text-charcoal/40"> (optional — falls back to English)</span>}
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">Title</label>
+            <input
+              name={`title${lang.suffix}`}
+              required={lang.required}
+              defaultValue={story?.[`title${lang.suffix}` as "title"]}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">Quote</label>
+            <textarea
+              name={`quote${lang.suffix}`}
+              rows={3}
+              required={lang.required}
+              defaultValue={story?.[`quote${lang.suffix}` as "quote"]}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
+        </div>
+      ))}
       <div>
         <label className="block text-sm font-medium text-charcoal">Related course (optional)</label>
         <select
@@ -73,6 +114,12 @@ function StoryForm({
         <p className="mt-1 text-xs text-charcoal/50">
           {story?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
         </p>
+        {story?.photo_url && (
+          <label className="mt-2 flex items-center gap-2 text-xs text-charcoal/60">
+            <input type="checkbox" name="remove_photo" />
+            Remove current photo
+          </label>
+        )}
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">

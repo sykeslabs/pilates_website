@@ -34,6 +34,7 @@ export async function sendBookingEmails(params: {
   participantName: string;
   participantEmail: string;
   participantPhone: string | null;
+  participantRemark: string | null;
   courseName: string;
   startTime: string;
 }) {
@@ -60,7 +61,11 @@ export async function sendBookingEmails(params: {
             subject: `New booking: ${params.courseName}`,
             html: `<p>New booking for <strong>${course}</strong> on <strong>${when}</strong>.</p><p>${name} &mdash; ${escapeHtml(
               params.participantEmail,
-            )}${params.participantPhone ? ` &mdash; ${escapeHtml(params.participantPhone)}` : ""}</p>`,
+            )}${params.participantPhone ? ` &mdash; ${escapeHtml(params.participantPhone)}` : ""}</p>${
+              params.participantRemark
+                ? `<p><strong>Comment:</strong> ${escapeHtml(params.participantRemark)}</p>`
+                : ""
+            }`,
           })
         : Promise.resolve(),
     ]);
@@ -93,5 +98,71 @@ export async function sendCancellationEmail(params: {
     });
   } catch {
     // Email is a nice-to-have on top of an already-cancelled booking.
+  }
+}
+
+// Best-effort: the waitlist entry is already saved regardless of whether
+// this email goes out.
+export async function sendWaitlistEmails(params: {
+  participantName: string;
+  participantEmail: string;
+  participantPhone: string | null;
+  courseName: string;
+  startTime: string;
+}) {
+  const resend = getResendClient();
+  if (!resend) return;
+
+  try {
+    const from = emailFrom();
+    const when = dateTimeFormatter.format(new Date(params.startTime));
+    const name = escapeHtml(params.participantName);
+    const course = escapeHtml(params.courseName);
+
+    await Promise.allSettled([
+      resend.emails.send({
+        from,
+        to: params.participantEmail,
+        subject: `You're on the waitlist: ${params.courseName}`,
+        html: `<p>Hi ${name},</p><p>That session for <strong>${course}</strong> on <strong>${when}</strong> is full, but we've added you to the waitlist. We'll be in touch if a spot opens up.</p>`,
+      }),
+      process.env.STUDIO_OWNER_EMAIL
+        ? resend.emails.send({
+            from,
+            to: process.env.STUDIO_OWNER_EMAIL,
+            subject: `New waitlist entry: ${params.courseName}`,
+            html: `<p>New waitlist entry for <strong>${course}</strong> on <strong>${when}</strong>.</p><p>${name} &mdash; ${escapeHtml(
+              params.participantEmail,
+            )}${params.participantPhone ? ` &mdash; ${escapeHtml(params.participantPhone)}` : ""}</p>`,
+          })
+        : Promise.resolve(),
+    ]);
+  } catch {
+    // Email is a nice-to-have on top of the already-saved waitlist entry.
+  }
+}
+
+// Best-effort: the message is already persisted in contact_messages
+// regardless of whether this notification email goes out.
+export async function sendContactMessageEmail(params: {
+  name: string;
+  email: string;
+  message: string;
+}) {
+  const resend = getResendClient();
+  if (!resend || !process.env.STUDIO_OWNER_EMAIL) return;
+
+  try {
+    await resend.emails.send({
+      from: emailFrom(),
+      to: process.env.STUDIO_OWNER_EMAIL,
+      replyTo: params.email,
+      subject: `New contact message from ${params.name}`,
+      html: `<p><strong>${escapeHtml(params.name)}</strong> (${escapeHtml(params.email)}) wrote:</p><p>${escapeHtml(
+        params.message,
+      ).replace(/\n/g, "<br>")}</p>`,
+    });
+  } catch {
+    // Email is a nice-to-have on top of the already-saved message.
   }
 }
