@@ -20,10 +20,13 @@ export default async function PricesPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
       <div className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-charcoal">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+          {dict.pricesPage.eyebrow}
+        </p>
+        <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl italic tracking-tight text-charcoal sm:text-5xl">
           {dict.pricesPage.heading}
         </h1>
-        <p className="mt-3 text-charcoal/70">{dict.pricesPage.subheading}</p>
+        <p className="mx-auto mt-4 max-w-md text-charcoal/70">{dict.pricesPage.subheading}</p>
       </div>
       <div className="mt-12 divide-y divide-sage-100 rounded-2xl border border-sage-100 bg-white sm:hidden">
         {courses?.map((course) => (

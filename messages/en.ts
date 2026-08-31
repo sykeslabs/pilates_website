@@ -44,6 +44,7 @@ export const en = {
     learnMore: "Learn more about this training",
   },
   coursesPage: {
+    eyebrow: "Find your class",
     heading: "Our courses",
     subheading: "Everything you need to know before you book.",
     seeAll: "See all course details",
@@ -61,8 +62,9 @@ export const en = {
     noUpcoming: "No upcoming sessions right now — check back soon.",
   },
   pricesPage: {
+    eyebrow: "No surprises",
     heading: "Prices",
-    subheading: "Simple, transparent pricing — pay directly with the studio for now.",
+    subheading: "Simple, transparent pricing",
     courseColumn: "Course",
     durationColumn: "Duration",
     priceColumn: "Price",
@@ -76,12 +78,14 @@ export const en = {
     ctaButton: "Book your class",
   },
   faqPage: {
+    eyebrow: "Here to help",
     heading: "Frequently asked questions",
     subheading: "Can't find your answer? Get in touch and we'll help.",
     contactHeading: "Still have questions?",
     contactBody: "Don't hesitate to reach out — call us or send a message below.",
   },
   contactPage: {
+    eyebrow: "Say hello",
     heading: "Contact & location",
     subheading: "Questions, special requests, or just want to say hi?",
     addressLabel: "Address",
@@ -106,6 +110,7 @@ export const en = {
     loadingTimes: "Loading available times…",
     noTimes: "No upcoming times are open for this course right now. Please check back soon.",
     loadTimesError: "Could not load available times. Please try again.",
+    courseColumn: "Course",
     dateColumn: "Date",
     timeColumn: "Time",
     spotsColumn: "Spots left",

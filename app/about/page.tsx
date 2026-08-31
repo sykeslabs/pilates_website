@@ -50,7 +50,11 @@ export default async function AboutPage() {
         <>
           {allPhotos.length > 0 && (
             <div className="mt-12 sm:hidden">
-              <PhotoSlider photos={allPhotos} />
+              <PhotoSlider
+                photos={allPhotos}
+                previousLabel={dict.common.previous}
+                nextLabel={dict.common.next}
+              />
             </div>
           )}
           <div className="mt-8 grid gap-8 sm:mt-12 sm:grid-cols-[220px_1fr]">

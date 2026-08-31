@@ -83,10 +83,13 @@ export default async function CoursesPage() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
+              {dict.coursesPage.eyebrow}
+            </p>
+            <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl italic tracking-tight text-charcoal sm:text-5xl">
               {dict.coursesPage.heading}
             </h1>
-            <p className="mt-3 text-lg text-charcoal/70">{dict.coursesPage.tagline}</p>
+            <p className="mt-4 text-lg text-charcoal/70">{dict.coursesPage.tagline}</p>
             <div className="mt-10 space-y-6">
               {dict.coursesPage.values.map((value, i) => (
                 <div key={value.title} className="flex items-start gap-4">

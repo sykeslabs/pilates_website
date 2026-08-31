@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { notifyBooking, notifyWaitlistJoin } from "@/app/actions/booking";
 import { courseName } from "@/lib/i18n/content";
@@ -38,7 +38,9 @@ export function BookingFlow({
     [courses, initialCourseSlug],
   );
 
-  const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(initialCourse);
+  const [selectedCourses, setSelectedCourses] = useState<CourseType[]>(
+    initialCourse ? [initialCourse] : [],
+  );
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
   const [joiningWaitlist, setJoiningWaitlist] = useState(false);
   const [slots, setSlots] = useState<AvailabilitySlot[] | null>(null);
@@ -52,8 +54,31 @@ export function BookingFlow({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
 
-  function selectCourse(course: CourseType) {
-    setSelectedCourse(course);
+  const timeStepRef = useRef<HTMLDivElement>(null);
+  const detailsStepRef = useRef<HTMLDivElement>(null);
+
+  function isMobileViewport() {
+    return typeof window !== "undefined" && window.matchMedia("(max-width: 639px)").matches;
+  }
+
+  useEffect(() => {
+    if (selectedCourses.length > 0 && isMobileViewport()) {
+      timeStepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedCourses]);
+
+  useEffect(() => {
+    if (selectedSlot && isMobileViewport()) {
+      detailsStepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedSlot]);
+
+  function toggleCourse(course: CourseType) {
+    setSelectedCourses((prev) =>
+      prev.some((c) => c.id === course.id)
+        ? prev.filter((c) => c.id !== course.id)
+        : [...prev, course],
+    );
     setSelectedSlot(null);
     setJoiningWaitlist(false);
     setSlots(null);
@@ -61,19 +86,33 @@ export function BookingFlow({
   }
 
   function selectSlot(slot: AvailabilitySlot, waitlist: boolean) {
-    setSelectedSlot(slot);
-    setJoiningWaitlist(waitlist);
+    if (selectedSlot?.id === slot.id) {
+      setSelectedSlot(null);
+      setJoiningWaitlist(false);
+    } else {
+      setSelectedSlot(slot);
+      setJoiningWaitlist(waitlist);
+    }
   }
 
+  const selectedCourseIds = useMemo(
+    () =>
+      selectedCourses
+        .map((c) => c.id)
+        .sort()
+        .join(","),
+    [selectedCourses],
+  );
+
   useEffect(() => {
-    if (!selectedCourse) return;
+    if (!selectedCourseIds) return;
 
     let cancelled = false;
     const supabase = createClient();
     supabase
       .from("availability_slots")
       .select("*")
-      .eq("course_type_id", selectedCourse.id)
+      .in("course_type_id", selectedCourseIds.split(","))
       .eq("is_active", true)
       .gt("start_time", new Date().toISOString())
       .order("start_time", { ascending: true })
@@ -90,11 +129,15 @@ export function BookingFlow({
     return () => {
       cancelled = true;
     };
-  }, [selectedCourse, dict.book.loadTimesError]);
+  }, [selectedCourseIds, dict.book.loadTimesError]);
+
+  const bookedCourse = selectedSlot
+    ? (courses.find((c) => c.id === selectedSlot.course_type_id) ?? null)
+    : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedSlot || !selectedCourse) return;
+    if (!selectedSlot || !bookedCourse) return;
 
     setSubmitting(true);
     setSubmitError(null);
@@ -121,7 +164,7 @@ export function BookingFlow({
         participantName: name,
         participantEmail: email,
         participantPhone: phone || null,
-        courseName: courseName(selectedCourse, locale),
+        courseName: courseName(bookedCourse, locale),
         startTime: selectedSlot.start_time,
       }).catch(() => {});
 
@@ -151,21 +194,21 @@ export function BookingFlow({
       participantEmail: email,
       participantPhone: phone || null,
       participantRemark: remark || null,
-      courseName: courseName(selectedCourse, locale),
+      courseName: courseName(bookedCourse, locale),
       startTime: selectedSlot.start_time,
     }).catch(() => {});
 
     setConfirmed(true);
   }
 
-  if (confirmed && selectedCourse && selectedSlot) {
+  if (confirmed && bookedCourse && selectedSlot) {
     return (
       <div className="rounded-2xl border border-sage-100 bg-white p-8 text-center shadow-sm">
         <h2 className="text-2xl font-semibold text-charcoal">
           {joiningWaitlist ? dict.book.waitlistConfirmedTitle : dict.book.confirmedTitle}
         </h2>
         <p className="mt-3 text-charcoal/70">
-          {courseName(selectedCourse, locale)} {dict.book.confirmedOn}{" "}
+          {courseName(bookedCourse, locale)} {dict.book.confirmedOn}{" "}
           {dateFormatter.format(new Date(selectedSlot.start_time))} {dict.book.confirmedAt}{" "}
           {timeFormatter.format(new Date(selectedSlot.start_time))}.
         </p>
@@ -186,32 +229,36 @@ export function BookingFlow({
           {dict.book.step1}
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {courses.map((course) => (
-            <button
-              key={course.id}
-              type="button"
-              onClick={() => selectCourse(course)}
-              className={`rounded-xl border p-4 text-left transition ${
-                selectedCourse?.id === course.id
-                  ? "border-sage-700 bg-sage-50"
-                  : "border-sage-100 bg-white hover:border-sage-300"
-              }`}
-            >
-              <div className="font-medium text-charcoal">{courseName(course, locale)}</div>
-              <div className="text-sm text-charcoal/60">
-                {course.duration_minutes} {dict.common.minutesShort}
-                {course.price_chf != null &&
-                  ` · CHF ${course.price_chf.toFixed(2)} ${
-                    course.class_type === "private" ? dict.common.perSession : dict.common.perPerson
-                  }`}
-              </div>
-            </button>
-          ))}
+          {courses.map((course) => {
+            const isSelected = selectedCourses.some((c) => c.id === course.id);
+            return (
+              <button
+                key={course.id}
+                type="button"
+                aria-pressed={isSelected}
+                onClick={() => toggleCourse(course)}
+                className={`rounded-xl border p-4 text-left transition ${
+                  isSelected
+                    ? "border-sage-700 bg-sage-50"
+                    : "border-sage-100 bg-white hover:border-sage-300"
+                }`}
+              >
+                <div className="font-medium text-charcoal">{courseName(course, locale)}</div>
+                <div className="text-sm text-charcoal/60">
+                  {course.duration_minutes} {dict.common.minutesShort}
+                  {course.price_chf != null &&
+                    ` · CHF ${course.price_chf.toFixed(2)} ${
+                      course.class_type === "private" ? dict.common.perSession : dict.common.perPerson
+                    }`}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {selectedCourse && (
-        <div>
+      {selectedCourses.length > 0 && (
+        <div ref={timeStepRef}>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-sage-700">
             {dict.book.step2}
           </h2>
@@ -228,6 +275,7 @@ export function BookingFlow({
                 <div className="divide-y divide-sage-100 rounded-2xl border border-sage-100 sm:hidden">
                   {slots.map((slot) => {
                     const isFull = slot.booked_count >= slot.capacity;
+                    const slotCourse = courses.find((c) => c.id === slot.course_type_id);
                     return (
                       <div
                         key={slot.id}
@@ -235,6 +283,11 @@ export function BookingFlow({
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div>
+                            {selectedCourses.length > 1 && slotCourse && (
+                              <div className="text-xs font-semibold uppercase tracking-wide text-sage-700">
+                                {courseName(slotCourse, locale)}
+                              </div>
+                            )}
                             <div className="font-medium text-charcoal">
                               {dateFormatter.format(new Date(slot.start_time))}
                             </div>
@@ -250,6 +303,7 @@ export function BookingFlow({
                         </div>
                         <button
                           type="button"
+                          aria-pressed={selectedSlot?.id === slot.id}
                           onClick={() => selectSlot(slot, isFull)}
                           className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-medium transition ${
                             selectedSlot?.id === slot.id
@@ -270,6 +324,9 @@ export function BookingFlow({
                   <table className="w-full text-left text-sm">
                     <thead className="bg-sage-50 text-charcoal/70">
                       <tr>
+                        {selectedCourses.length > 1 && (
+                          <th className="px-4 py-3 font-medium">{dict.book.courseColumn}</th>
+                        )}
                         <th className="px-4 py-3 font-medium">{dict.book.dateColumn}</th>
                         <th className="px-4 py-3 font-medium">{dict.book.timeColumn}</th>
                         <th className="px-4 py-3 font-medium">{dict.book.spotsColumn}</th>
@@ -279,6 +336,7 @@ export function BookingFlow({
                     <tbody>
                       {slots.map((slot) => {
                         const isFull = slot.booked_count >= slot.capacity;
+                        const slotCourse = courses.find((c) => c.id === slot.course_type_id);
                         return (
                           <tr
                             key={slot.id}
@@ -286,6 +344,11 @@ export function BookingFlow({
                               selectedSlot?.id === slot.id ? "bg-sage-50" : "bg-white"
                             }`}
                           >
+                            {selectedCourses.length > 1 && (
+                              <td className="px-4 py-3 text-charcoal">
+                                {slotCourse ? courseName(slotCourse, locale) : "—"}
+                              </td>
+                            )}
                             <td className="px-4 py-3 text-charcoal">
                               {dateFormatter.format(new Date(slot.start_time))}
                             </td>
@@ -300,6 +363,7 @@ export function BookingFlow({
                             <td className="px-4 py-3 text-right">
                               <button
                                 type="button"
+                                aria-pressed={selectedSlot?.id === slot.id}
                                 onClick={() => selectSlot(slot, isFull)}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
                                   selectedSlot?.id === slot.id
@@ -325,7 +389,7 @@ export function BookingFlow({
       )}
 
       {selectedSlot && (
-        <div>
+        <div ref={detailsStepRef} className="rounded-2xl border border-sage-100 bg-sage-50 p-6 sm:p-8">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-sage-700">
             {dict.book.step3}
           </h2>

@@ -46,6 +46,7 @@ export const de: Dictionary = {
     learnMore: "Mehr über diesen Kurs erfahren",
   },
   coursesPage: {
+    eyebrow: "Finde deinen Kurs",
     heading: "Unsere Kurse",
     subheading: "Alles, was du vor der Buchung wissen musst.",
     seeAll: "Alle Kursdetails ansehen",
@@ -69,8 +70,9 @@ export const de: Dictionary = {
     noUpcoming: "Aktuell keine Termine geplant — schau bald wieder vorbei.",
   },
   pricesPage: {
+    eyebrow: "Keine Überraschungen",
     heading: "Preise",
-    subheading: "Einfache, transparente Preise — die Zahlung erfolgt aktuell direkt mit dem Studio.",
+    subheading: "Einfache, transparente Preise",
     courseColumn: "Kurs",
     durationColumn: "Dauer",
     priceColumn: "Preis",
@@ -84,12 +86,14 @@ export const de: Dictionary = {
     ctaButton: "Jetzt Kurs buchen",
   },
   faqPage: {
+    eyebrow: "Wir helfen gerne",
     heading: "Häufig gestellte Fragen",
     subheading: "Deine Frage ist nicht dabei? Melde dich, wir helfen gerne weiter.",
     contactHeading: "Noch Fragen?",
     contactBody: "Melde dich gerne — ruf uns an oder schreib uns unten eine Nachricht.",
   },
   contactPage: {
+    eyebrow: "Sag Hallo",
     heading: "Kontakt & Standort",
     subheading: "Fragen, spezielle Wünsche, oder einfach nur Hallo sagen?",
     addressLabel: "Adresse",
@@ -114,6 +118,7 @@ export const de: Dictionary = {
     loadingTimes: "Verfügbare Zeiten werden geladen…",
     noTimes: "Für diesen Kurs sind aktuell keine Termine frei. Schau bald wieder vorbei.",
     loadTimesError: "Verfügbare Zeiten konnten nicht geladen werden. Bitte versuche es erneut.",
+    courseColumn: "Kurs",
     dateColumn: "Datum",
     timeColumn: "Zeit",
     spotsColumn: "Freie Plätze",

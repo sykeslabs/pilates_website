@@ -46,6 +46,7 @@ export const fr: Dictionary = {
     learnMore: "En savoir plus sur ce cours",
   },
   coursesPage: {
+    eyebrow: "Trouvez votre cours",
     heading: "Nos cours",
     subheading: "Tout ce qu'il faut savoir avant de réserver.",
     seeAll: "Voir tous les détails des cours",
@@ -69,8 +70,9 @@ export const fr: Dictionary = {
     noUpcoming: "Aucune séance prévue pour le moment — revenez bientôt.",
   },
   pricesPage: {
+    eyebrow: "Aucune surprise",
     heading: "Tarifs",
-    subheading: "Des tarifs simples et transparents — le paiement se règle pour l'instant directement avec le studio.",
+    subheading: "Des tarifs simples et transparents",
     courseColumn: "Cours",
     durationColumn: "Durée",
     priceColumn: "Prix",
@@ -84,12 +86,14 @@ export const fr: Dictionary = {
     ctaButton: "Réserver votre cours",
   },
   faqPage: {
+    eyebrow: "Nous sommes là",
     heading: "Questions fréquentes",
     subheading: "Vous ne trouvez pas votre réponse ? Contactez-nous, nous vous aiderons.",
     contactHeading: "Encore des questions ?",
     contactBody: "N'hésitez pas à nous contacter — appelez-nous ou envoyez un message ci-dessous.",
   },
   contactPage: {
+    eyebrow: "Dites bonjour",
     heading: "Contact & emplacement",
     subheading: "Des questions, une demande particulière, ou juste envie de nous dire bonjour ?",
     addressLabel: "Adresse",
@@ -114,6 +118,7 @@ export const fr: Dictionary = {
     loadingTimes: "Chargement des créneaux disponibles…",
     noTimes: "Aucun créneau n'est disponible pour ce cours en ce moment. Revenez bientôt.",
     loadTimesError: "Impossible de charger les créneaux disponibles. Veuillez réessayer.",
+    courseColumn: "Cours",
     dateColumn: "Date",
     timeColumn: "Horaire",
     spotsColumn: "Places libres",
