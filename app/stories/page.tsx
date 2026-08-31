@@ -28,9 +28,9 @@ export default async function StoriesPage() {
       </div>
 
       {stories && stories.length > 0 && (
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3">
           {stories.map((story) => (
-            <div key={story.id} className={story.instagram_url ? "sm:col-span-2" : undefined}>
+            <div key={story.id} className="mb-6 break-inside-avoid">
               <SuccessStoryCard story={story} locale={locale} />
             </div>
           ))}

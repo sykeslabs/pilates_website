@@ -1,19 +1,38 @@
 "use client";
 
-import { Children, useState } from "react";
+import { Children, useEffect, useRef, useState } from "react";
 
 export function Carousel({
   children,
   previousLabel,
   nextLabel,
+  dynamicHeight = false,
 }: {
   children: React.ReactNode;
   previousLabel: string;
   nextLabel: string;
+  dynamicHeight?: boolean;
 }) {
   const items = Children.toArray(children);
   const count = items.length;
   const [index, setIndex] = useState(0);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (!dynamicHeight) return;
+    const el = itemRefs.current[index];
+    if (!el) return;
+
+    setHeight(el.scrollHeight);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setHeight(entry.target.scrollHeight);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [dynamicHeight, index]);
 
   if (count === 0) return null;
 
@@ -35,13 +54,22 @@ export function Carousel({
           </button>
         )}
 
-        <div className="min-w-0 flex-1 overflow-hidden">
+        <div
+          className={`min-w-0 flex-1 overflow-hidden ${dynamicHeight ? "transition-[height] duration-300 ease-in-out" : ""}`}
+          style={dynamicHeight ? { height } : undefined}
+        >
           <div
-            className="flex transition-transform duration-500 ease-in-out"
+            className={`flex transition-transform duration-500 ease-in-out ${dynamicHeight ? "items-start" : ""}`}
             style={{ transform: `translateX(-${index * 100}%)` }}
           >
             {items.map((item, i) => (
-              <div key={i} className="w-full shrink-0 px-1">
+              <div
+                key={i}
+                ref={(el) => {
+                  itemRefs.current[i] = el;
+                }}
+                className="w-full shrink-0 px-1"
+              >
                 {item}
               </div>
             ))}

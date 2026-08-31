@@ -147,9 +147,13 @@ export default async function HomePage() {
               <p className="mt-4 text-charcoal/70">{dict.home.storiesSubheading}</p>
             </div>
             <div className="mt-12">
-              <Carousel previousLabel={dict.common.previous} nextLabel={dict.common.next}>
+              <Carousel
+                previousLabel={dict.common.previous}
+                nextLabel={dict.common.next}
+                dynamicHeight
+              >
                 {stories.map((story) => (
-                  <SuccessStoryCard key={story.id} story={story} locale={locale} />
+                  <SuccessStoryCard key={story.id} story={story} locale={locale} compact />
                 ))}
               </Carousel>
             </div>
