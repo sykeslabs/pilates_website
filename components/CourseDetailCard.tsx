@@ -102,7 +102,7 @@ export function CourseDetailCard({
                 <Link
                   key={slot.id}
                   href={`/book?course=${course.slug}`}
-                  className="rounded-full border border-sage-100 px-4 py-2 text-center text-sm text-charcoal transition hover:border-sage-300 hover:bg-sage-50"
+                  className="whitespace-nowrap rounded-full border border-sage-100 px-2 py-2 text-center text-xs text-charcoal transition hover:border-sage-300 hover:bg-sage-50 sm:px-4 sm:text-sm"
                 >
                   {dateFormatter.format(new Date(slot.start_time))} ·{" "}
                   {timeFormatter.format(new Date(slot.start_time))}

@@ -136,6 +136,7 @@ export async function upsertSuccessStory(formData: FormData) {
   const quote_de = formData.get("quote_de")?.toString().trim() ?? "";
   const quote_fr = formData.get("quote_fr")?.toString().trim() ?? "";
   const course_type_id = formData.get("course_type_id")?.toString() || null;
+  const instagram_url = formData.get("instagram_url")?.toString().trim() || null;
 
   if (!name || !title || !quote) {
     throw new Error("Name, title, and quote (English) are required.");
@@ -156,6 +157,7 @@ export async function upsertSuccessStory(formData: FormData) {
         quote_de,
         quote_fr,
         course_type_id,
+        instagram_url,
         ...(removePhoto ? { photo_url: null } : newPhotoUrl ? { photo_url: newPhotoUrl } : {}),
       })
       .eq("id", id);
@@ -170,6 +172,7 @@ export async function upsertSuccessStory(formData: FormData) {
       quote_de,
       quote_fr,
       course_type_id,
+      instagram_url,
       photo_url: newPhotoUrl,
     });
     if (error) throw new Error(error.message);

@@ -38,6 +38,7 @@ export type SuccessStory = {
   quote_de: string;
   quote_fr: string;
   photo_url: string | null;
+  instagram_url: string | null;
   course_type_id: string | null;
   display_order: number;
   created_at: string;

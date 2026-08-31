@@ -94,6 +94,20 @@ function StoryForm({
         </div>
       ))}
       <div>
+        <label className="block text-sm font-medium text-charcoal">Instagram post/reel URL (optional)</label>
+        <input
+          name="instagram_url"
+          type="url"
+          placeholder="https://www.instagram.com/reel/..."
+          defaultValue={story?.instagram_url ?? ""}
+          className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+        />
+        <p className="mt-1 text-xs text-charcoal/50">
+          When set, this replaces the text quote on the card with an embedded Instagram post. The
+          post must be public.
+        </p>
+      </div>
+      <div>
         <label className="block text-sm font-medium text-charcoal">Related course (optional)</label>
         <select
           name="course_type_id"
