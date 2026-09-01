@@ -102,7 +102,7 @@ export function MobileNav({
                   {courses.map((course) => (
                     <Link
                       key={course.id}
-                      href={`/courses#${course.slug}`}
+                      href={`/courses?course=${course.slug}`}
                       onClick={() => setOpen(false)}
                       className="text-charcoal/70 hover:font-semibold hover:text-sage-700"
                     >

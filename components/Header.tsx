@@ -1,9 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { MobileNav } from "@/components/MobileNav";
 import { CoursesNavDropdown } from "@/components/CoursesNavDropdown";
 import { BookNavLink } from "@/components/BookNavLink";
+import { BrandLink } from "@/components/BrandLink";
 import { NavLink } from "@/components/NavLink";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
@@ -21,13 +21,10 @@ export function Header({
   return (
     <header className="sticky top-0 z-[100] border-b border-sage-100 bg-cream/90 backdrop-blur">
       <div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-sage-700"
-        >
+        <BrandLink className="flex items-center gap-2 text-lg font-semibold tracking-tight text-sage-700">
           <Image src="/images/placeholders/logo-mark.svg" alt="" width={28} height={28} />
           {dict.header.brand}
-        </Link>
+        </BrandLink>
         <nav className="flex items-center gap-4 text-sm font-medium text-charcoal sm:gap-6">
           <div className="hidden lg:flex">
             <CoursesNavDropdown courses={courses} locale={locale} label={dict.header.courses} />

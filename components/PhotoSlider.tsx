@@ -8,11 +8,15 @@ export function PhotoSlider({
   intervalMs = 4000,
   previousLabel = "Previous",
   nextLabel = "Next",
+  className = "relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-sage-50",
+  alt = "",
 }: {
   photos: string[];
   intervalMs?: number;
   previousLabel?: string;
   nextLabel?: string;
+  className?: string;
+  alt?: string;
 }) {
   const [index, setIndex] = useState(0);
   const [resetKey, setResetKey] = useState(0);
@@ -33,14 +37,14 @@ export function PhotoSlider({
   }
 
   return (
-    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-sage-50">
+    <div className={className}>
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {photos.map((src) => (
           <div key={src} className="relative h-full w-full shrink-0">
-            <Image src={src} alt="" fill className="object-cover" sizes="100vw" />
+            <Image src={src} alt={alt} fill className="object-cover" sizes="100vw" />
           </div>
         ))}
       </div>

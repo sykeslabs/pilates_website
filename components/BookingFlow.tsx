@@ -15,11 +15,13 @@ type BookingResult = { slot: AvailabilitySlot; course: CourseType; waitlisted: b
 export function BookingFlow({
   courses,
   initialCourseSlug,
+  initialSlotId,
   locale,
   dict,
 }: {
   courses: CourseType[];
   initialCourseSlug?: string;
+  initialSlotId?: string;
   locale: Locale;
   dict: Pick<Dictionary, "common" | "book">;
 }) {
@@ -48,6 +50,7 @@ export function BookingFlow({
   const [selectedSlots, setSelectedSlots] = useState<AvailabilitySlot[]>([]);
   const [slots, setSlots] = useState<AvailabilitySlot[] | null>(null);
   const [slotsError, setSlotsError] = useState<string | null>(null);
+  const [pendingInitialSlotId, setPendingInitialSlotId] = useState(initialSlotId);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -107,12 +110,21 @@ export function BookingFlow({
           return;
         }
         setSlots(data ?? []);
+        if (pendingInitialSlotId) {
+          const match = data?.find((s) => s.id === pendingInitialSlotId);
+          if (match) {
+            setSelectedSlots((prev) =>
+              prev.some((s) => s.id === match.id) ? prev : [...prev, match],
+            );
+          }
+          setPendingInitialSlotId(undefined);
+        }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [selectedCourseIds, dict.book.loadTimesError]);
+  }, [selectedCourseIds, dict.book.loadTimesError, pendingInitialSlotId]);
 
   const anySelectedIsWaitlist = selectedSlots.some((s) => s.booked_count >= s.capacity);
   const allSelectedAreWaitlist =

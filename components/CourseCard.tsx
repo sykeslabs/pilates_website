@@ -18,7 +18,7 @@ export function CourseCard({
   const badge = courseBadgeLabel(course, locale);
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-sage-100 bg-white shadow-sm transition hover:shadow-md">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl border border-sage-100 bg-white shadow-sm transition hover:shadow-md">
       <div className="relative aspect-[4/3] w-full bg-sage-50">
         {course.photo_url && (
           <Image
@@ -56,17 +56,23 @@ export function CourseCard({
         </div>
         <Link
           href={`/book?course=${course.slug}`}
-          className="mt-2 inline-flex items-center justify-center rounded-full bg-sage-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-sage-500"
+          className="relative z-10 mt-2 inline-flex items-center justify-center rounded-full bg-sage-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-sage-500"
         >
           {dict.courseCard.checkAvailability}
         </Link>
         <Link
-          href={`/courses#${course.slug}`}
-          className="text-center text-sm font-medium text-sage-700 hover:underline"
+          href={`/courses?course=${course.slug}`}
+          className="relative z-10 text-center text-sm font-medium text-sage-700 hover:underline"
         >
           {dict.courseCard.learnMore}
         </Link>
       </div>
+      <Link
+        href={`/courses?course=${course.slug}`}
+        aria-hidden="true"
+        tabIndex={-1}
+        className="absolute inset-0 z-0"
+      />
     </div>
   );
 }

@@ -11,6 +11,12 @@ export type CourseType = {
   brief_description_de: string;
   brief_description_fr: string;
   photo_url: string | null;
+  photo_2_url: string | null;
+  photo_3_url: string | null;
+  photo_4_url: string | null;
+  photo_5_url: string | null;
+  photo_6_url: string | null;
+  photo_7_url: string | null;
   badge_label: string | null;
   badge_label_de: string | null;
   badge_label_fr: string | null;

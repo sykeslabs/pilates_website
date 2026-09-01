@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { PhotoSlider } from "@/components/PhotoSlider";
 import { courseName, courseDescription, courseBadgeLabel } from "@/lib/i18n/content";
 import { localeTags, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
@@ -38,20 +38,21 @@ export function CourseDetailCard({
   });
 
   return (
-    <div
-      id={course.slug}
-      className="grid overflow-hidden rounded-3xl bg-white shadow-sm lg:min-h-[calc(100vh-4rem)] lg:grid-cols-2"
-    >
-      <div className="relative h-72 sm:h-96 lg:h-auto">
-        {course.photo_url && (
-          <Image
-            src={course.photo_url}
-            alt={name}
-            fill
-            className="object-cover"
-            sizes="(min-width: 1024px) 50vw, 100vw"
-          />
-        )}
+    <div className="grid overflow-hidden rounded-3xl bg-white shadow-sm lg:min-h-[calc(100vh-4rem)] lg:grid-cols-2">
+      <div className="relative h-72 sm:h-96 lg:h-full bg-sage-50">
+        <PhotoSlider
+          photos={[
+            course.photo_url,
+            course.photo_2_url,
+            course.photo_3_url,
+            course.photo_4_url,
+            course.photo_5_url,
+            course.photo_6_url,
+            course.photo_7_url,
+          ].filter((url): url is string => Boolean(url))}
+          className="relative h-full w-full overflow-hidden"
+          alt={name}
+        />
         {badge && (
           <span className="absolute left-4 top-4 rounded-full bg-terracotta-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">
             {badge}
@@ -109,7 +110,7 @@ export function CourseDetailCard({
               {upcomingSlots.map((slot) => (
                 <Link
                   key={slot.id}
-                  href={`/book?course=${course.slug}`}
+                  href={`/book?course=${course.slug}&slot=${slot.id}`}
                   className="whitespace-nowrap rounded-full border border-sage-100 px-2 py-2 text-center text-xs text-charcoal transition hover:border-sage-300 hover:bg-sage-50 sm:px-4 sm:text-sm"
                 >
                   {dateFormatter.format(new Date(slot.start_time))} ·{" "}

@@ -2,12 +2,16 @@ import Image from "next/image";
 import { GroupIcon, CertificateIcon, CalendarIcon } from "@/components/BenefitIcons";
 import { createClient } from "@/lib/supabase/server";
 import { CourseDetailCard } from "@/components/CourseDetailCard";
+import { ScrollToCourse } from "@/components/ScrollToCourse";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import { nowIso } from "@/lib/time";
 import type { AvailabilitySlot, CourseType, CoursePageSettings } from "@/lib/types";
 
-export default async function CoursesPage() {
+export default async function CoursesPage({ searchParams }: PageProps<"/courses">) {
+  const params = await searchParams;
+  const targetCourseSlug = typeof params.course === "string" ? params.course : undefined;
+
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
@@ -56,6 +60,7 @@ export default async function CoursesPage() {
 
   return (
     <div>
+      <ScrollToCourse slug={targetCourseSlug} />
       <section className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-10 lg:min-h-screen">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-16 lg:grid-cols-2">
           <div className="relative order-2 mx-auto aspect-square w-full max-w-sm lg:order-1">
@@ -116,7 +121,8 @@ export default async function CoursesPage() {
       {courses?.map((course, i) => (
         <section
           key={course.id}
-          className={`flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 lg:sticky lg:top-16 lg:min-h-screen ${
+          id={course.slug}
+          className={`scroll-mt-16 flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 lg:sticky lg:top-16 lg:min-h-[calc(100vh+6rem)] ${
             i % 2 === 0 ? "bg-sand" : "bg-cream"
           }`}
           style={{ zIndex: 20 + i * 10 }}

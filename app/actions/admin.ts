@@ -88,6 +88,7 @@ export async function upsertCourseType(formData: FormData) {
         price_chf,
         class_type,
         ...(removePhoto ? { photo_url: null } : newPhotoUrl ? { photo_url: newPhotoUrl } : {}),
+        ...photoSlotValues(formData, 7, "photo"),
       })
       .eq("id", id);
     if (error) throw new Error(error.message);
@@ -111,6 +112,7 @@ export async function upsertCourseType(formData: FormData) {
       price_chf,
       class_type,
       photo_url: newPhotoUrl,
+      ...photoSlotValues(formData, 7, "photo"),
     });
     if (error) throw new Error(error.message);
   }
@@ -118,6 +120,7 @@ export async function upsertCourseType(formData: FormData) {
   revalidatePath("/admin/dashboard");
   revalidatePath("/");
   revalidatePath("/book");
+  revalidatePath("/courses");
 }
 
 export async function setCourseTypeActive(id: string, isActive: boolean) {

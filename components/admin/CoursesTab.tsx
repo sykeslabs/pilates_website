@@ -32,10 +32,21 @@ function CourseForm({
       const formData = new FormData(e.currentTarget);
       const photo = formData.get("photo");
       formData.delete("photo");
+      const name = formData.get("name")?.toString().trim() || "course";
 
       if (photo instanceof File && photo.size > 0) {
-        const name = formData.get("name")?.toString().trim() || "course";
         formData.set("photo_url", await uploadPhoto(photo, `courses/${slugify(name)}`));
+      }
+
+      for (let i = 2; i <= 7; i++) {
+        const galleryPhoto = formData.get(`photo_${i}`);
+        formData.delete(`photo_${i}`);
+        if (galleryPhoto instanceof File && galleryPhoto.size > 0) {
+          formData.set(
+            `photo_${i}_url`,
+            await uploadPhoto(galleryPhoto, `courses/${slugify(name)}-${i}`),
+          );
+        }
       }
 
       await upsertCourseType(formData);
@@ -159,6 +170,30 @@ function CourseForm({
         removeName="remove_photo"
         hint={course?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
       />
+
+      <div className="space-y-4">
+        <p className="text-sm font-medium text-charcoal">
+          Course page gallery{" "}
+          <span className="font-normal text-charcoal/40">
+            (up to 7 photos incl. the one above, shown as a slider on the course details page only —
+            auto-advances, with manual left/right arrows)
+          </span>
+        </p>
+        {[2, 3, 4, 5, 6, 7].map((i) => {
+          const existingUrl = course?.[`photo_${i}_url` as "photo_2_url"];
+          return (
+            <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+              <PhotoField
+                name={`photo_${i}`}
+                label={`Photo ${i}`}
+                existingUrl={existingUrl}
+                removeName={`remove_photo_${i}`}
+              />
+            </div>
+          );
+        })}
+      </div>
+
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">
         <button

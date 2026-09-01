@@ -7,6 +7,7 @@ import type { CourseType } from "@/lib/types";
 export default async function BookPage({ searchParams }: PageProps<"/book">) {
   const params = await searchParams;
   const courseSlug = typeof params.course === "string" ? params.course : undefined;
+  const slotId = typeof params.slot === "string" ? params.slot : undefined;
 
   const locale = await getLocale();
   const dict = getDictionary(locale);
@@ -31,6 +32,7 @@ export default async function BookPage({ searchParams }: PageProps<"/book">) {
         <BookingFlow
           courses={courses ?? []}
           initialCourseSlug={courseSlug}
+          initialSlotId={slotId}
           locale={locale}
           dict={dict}
         />

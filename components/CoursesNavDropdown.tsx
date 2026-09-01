@@ -69,7 +69,7 @@ export function CoursesNavDropdown({
           {courses.map((course) => (
             <Link
               key={course.id}
-              href={`/courses#${course.slug}`}
+              href={`/courses?course=${course.slug}`}
               onClick={() => setOpen(false)}
               className="block px-4 py-2 text-sm text-charcoal hover:bg-sage-50 hover:font-semibold hover:text-sage-700"
             >

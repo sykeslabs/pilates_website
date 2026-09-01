@@ -55,7 +55,7 @@ export default async function PricesPage() {
             </div>
             <Link
               href={`/book?course=${course.slug}`}
-              className="mt-3 block w-full rounded-full border border-sage-100 px-4 py-2 text-center text-sm font-medium text-charcoal transition hover:border-sage-300"
+              className="mt-3 block w-full rounded-full bg-sage-700 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-sage-500"
             >
               {dict.courseCard.checkAvailability}
             </Link>
@@ -99,7 +99,7 @@ export default async function PricesPage() {
                 <td className="px-6 py-4 text-right">
                   <Link
                     href={`/book?course=${course.slug}`}
-                    className="rounded-full border border-sage-100 px-4 py-1.5 text-xs font-medium text-charcoal transition hover:border-sage-300"
+                    className="rounded-full bg-sage-700 px-4 py-1.5 text-xs font-medium text-white transition hover:bg-sage-500"
                   >
                     {dict.courseCard.checkAvailability}
                   </Link>
