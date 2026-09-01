@@ -4,6 +4,9 @@ import { useState } from "react";
 import type { CoursePageSettings } from "@/lib/types";
 import { upsertCoursePageSettings } from "@/app/actions/admin";
 import { uploadPhoto } from "@/lib/uploadPhoto";
+import { PhotoField } from "@/components/admin/PhotoField";
+
+const VALUE_LABELS = ["Small groups", "Certified instructor", "Flexible booking"];
 
 export function CoursePageTab({ settings }: { settings: CoursePageSettings | null }) {
   const [pending, setPending] = useState(false);
@@ -24,6 +27,14 @@ export function CoursePageTab({ settings }: { settings: CoursePageSettings | nul
         if (icon instanceof File && icon.size > 0) {
           formData.set(`value_icon_${i}_url`, await uploadPhoto(icon, `course-page/icon-${i}`));
         }
+        const heroPhoto = formData.get(`hero_photo_${i}`);
+        formData.delete(`hero_photo_${i}`);
+        if (heroPhoto instanceof File && heroPhoto.size > 0) {
+          formData.set(
+            `hero_photo_${i}_url`,
+            await uploadPhoto(heroPhoto, `course-page/hero-${i}`),
+          );
+        }
       }
 
       await upsertCoursePageSettings(formData);
@@ -36,35 +47,50 @@ export function CoursePageTab({ settings }: { settings: CoursePageSettings | nul
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-sage-100 bg-white p-6">
+    <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-sage-100 bg-white p-6">
       {settings && <input type="hidden" name="id" value={settings.id} />}
-      <p className="text-sm text-charcoal/60">
-        On the /courses page, the &ldquo;1, 2, 3&rdquo; badges next to Small groups / Certified
-        instructor / Flexible booking can each be replaced with a photo or icon.
-        Leave any of these empty to keep the plain numbered badge.
-      </p>
-      {[1, 2, 3].map((i) => {
-        const existingUrl = settings?.[`value_icon_${i}_url` as "value_icon_1_url"];
-        return (
-          <div key={i} className="space-y-2 rounded-xl bg-sage-50/60 p-4">
-            <label className="block text-sm font-medium text-charcoal">
-              Icon/photo {i} <span className="font-normal text-charcoal/40">(optional)</span>
-            </label>
-            <input
-              name={`value_icon_${i}`}
-              type="file"
-              accept="image/*"
-              className="w-full text-sm"
-            />
-            {existingUrl && (
-              <label className="flex items-center gap-2 text-xs text-charcoal/60">
-                <input type="checkbox" name={`remove_value_icon_${i}`} />
-                Remove current photo
-              </label>
-            )}
-          </div>
-        );
-      })}
+
+      <div className="space-y-4">
+        <p className="text-sm text-charcoal/60">
+          On the /courses page, the icons next to Small groups / Certified instructor / Flexible
+          booking can each be replaced with your own photo. Leave any of these empty to keep the
+          built-in icon.
+        </p>
+        {[1, 2, 3].map((i) => {
+          const existingUrl = settings?.[`value_icon_${i}_url` as "value_icon_1_url"];
+          return (
+            <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+              <PhotoField
+                name={`value_icon_${i}`}
+                label={`${VALUE_LABELS[i - 1]} icon (optional)`}
+                existingUrl={existingUrl}
+                removeName={`remove_value_icon_${i}`}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="space-y-4 border-t border-sage-100 pt-6">
+        <p className="text-sm text-charcoal/60">
+          The three rotated photos on the left of the /courses page intro can also be replaced.
+          Leave any of these empty to keep the placeholder illustration.
+        </p>
+        {[1, 2, 3].map((i) => {
+          const existingUrl = settings?.[`hero_photo_${i}_url` as "hero_photo_1_url"];
+          return (
+            <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+              <PhotoField
+                name={`hero_photo_${i}`}
+                label={`Hero photo ${i} (optional)`}
+                existingUrl={existingUrl}
+                removeName={`remove_hero_photo_${i}`}
+              />
+            </div>
+          );
+        })}
+      </div>
+
       {error && <p className="text-sm text-red-600">{error}</p>}
       {saved && <p className="text-sm text-sage-700">Saved.</p>}
       <button

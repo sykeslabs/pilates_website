@@ -112,7 +112,7 @@ export default async function ContactPage() {
         </div>
       )}
 
-      <div className="mt-12 rounded-3xl bg-sage-700 px-8 py-12 text-cream">
+      <div id="send-message" className="mt-12 scroll-mt-20 rounded-3xl bg-sage-700 px-8 py-12 text-cream">
         <div className="text-center">
           <h2 className="font-[family-name:var(--font-display)] text-3xl italic sm:text-4xl">
             {dict.contactPage.formHeading}

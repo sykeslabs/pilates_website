@@ -10,6 +10,7 @@ import type {
   StudioInfo,
   ContactMessage,
   CoursePageSettings,
+  HomeBenefitsSettings,
 } from "@/lib/types";
 import type { SlotWithCourse, BookingWithSlot, WaitlistEntryWithSlot } from "@/lib/adminTypes";
 import { CoursesTab } from "@/components/admin/CoursesTab";
@@ -22,6 +23,7 @@ import { HeroTab } from "@/components/admin/HeroTab";
 import { StudioInfoTab } from "@/components/admin/StudioInfoTab";
 import { MessagesTab } from "@/components/admin/MessagesTab";
 import { CoursePageTab } from "@/components/admin/CoursePageTab";
+import { BenefitsIconsTab } from "@/components/admin/BenefitsIconsTab";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 
 const TABS = [
@@ -33,6 +35,7 @@ const TABS = [
   "FAQ",
   "Hero",
   "Courses page",
+  "Benefits icons",
   "Contact info",
   "Messages",
 ] as const;
@@ -50,6 +53,7 @@ export function AdminDashboard({
   studio,
   messages,
   coursePageSettings,
+  homeBenefitsSettings,
 }: {
   courses: CourseType[];
   successStories: SuccessStory[];
@@ -62,8 +66,15 @@ export function AdminDashboard({
   studio: StudioInfo | null;
   messages: ContactMessage[];
   coursePageSettings: CoursePageSettings | null;
+  homeBenefitsSettings: HomeBenefitsSettings | null;
 }) {
   const [tab, setTab] = useState<Tab>("Courses");
+  const [bookingsSlotFilter, setBookingsSlotFilter] = useState<string | null>(null);
+
+  function handleSelectSlot(slotId: string) {
+    setBookingsSlotFilter(slotId);
+    setTab("Bookings");
+  }
 
   return (
     <div>
@@ -71,6 +82,9 @@ export function AdminDashboard({
         <h1 className="text-2xl font-semibold text-charcoal">Studio dashboard</h1>
         <LogoutButton />
       </div>
+      <p className="mt-1 text-sm text-charcoal/60">
+        Hey there! Stay humble - peace, love &amp; harmony.
+      </p>
 
       <div className="mt-8 flex flex-wrap gap-2 border-b border-sage-100">
         {TABS.map((t) => (
@@ -90,9 +104,22 @@ export function AdminDashboard({
 
       <div className="mt-8">
         {tab === "Courses" && <CoursesTab courses={courses} />}
-        {tab === "Availability" && <AvailabilityTab courses={courses} slots={slots} />}
+        {tab === "Availability" && (
+          <AvailabilityTab
+            courses={courses}
+            slots={slots}
+            waitlistEntries={waitlistEntries}
+            onSelectSlot={handleSelectSlot}
+          />
+        )}
         {tab === "Bookings" && (
-          <BookingsTab bookings={bookings} waitlistEntries={waitlistEntries} />
+          <BookingsTab
+            bookings={bookings}
+            waitlistEntries={waitlistEntries}
+            courses={courses}
+            slotFilter={bookingsSlotFilter}
+            onClearSlotFilter={() => setBookingsSlotFilter(null)}
+          />
         )}
         {tab === "Success stories" && (
           <StoriesTab stories={successStories} courses={courses} />
@@ -101,6 +128,7 @@ export function AdminDashboard({
         {tab === "FAQ" && <FaqTab faqs={faqs} />}
         {tab === "Hero" && <HeroTab hero={hero} />}
         {tab === "Courses page" && <CoursePageTab settings={coursePageSettings} />}
+        {tab === "Benefits icons" && <BenefitsIconsTab settings={homeBenefitsSettings} />}
         {tab === "Contact info" && <StudioInfoTab studio={studio} />}
         {tab === "Messages" && <MessagesTab messages={messages} />}
       </div>

@@ -4,6 +4,7 @@ import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { MobileNav } from "@/components/MobileNav";
 import { CoursesNavDropdown } from "@/components/CoursesNavDropdown";
 import { BookNavLink } from "@/components/BookNavLink";
+import { NavLink } from "@/components/NavLink";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
 import type { CourseType } from "@/lib/types";
@@ -31,21 +32,31 @@ export function Header({
           <div className="hidden lg:flex">
             <CoursesNavDropdown courses={courses} locale={locale} label={dict.header.courses} />
           </div>
-          <Link href="/prices" className="hidden hover:text-sage-700 lg:inline">
-            {dict.footer.pricesLink}
-          </Link>
-          <Link href="/stories" className="hidden hover:text-sage-700 lg:inline">
-            {dict.header.stories}
-          </Link>
-          <Link href="/about" className="hidden hover:text-sage-700 lg:inline">
-            {dict.footer.aboutLink}
-          </Link>
-          <Link href="/faq" className="hidden hover:text-sage-700 lg:inline">
-            {dict.footer.faqLink}
-          </Link>
-          <Link href="/contact" className="hidden hover:text-sage-700 lg:inline">
-            {dict.footer.contactLink}
-          </Link>
+          <NavLink
+            href="/prices"
+            label={dict.footer.pricesLink}
+            className="hidden rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 lg:inline"
+          />
+          <NavLink
+            href="/stories"
+            label={dict.header.stories}
+            className="hidden rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 lg:inline"
+          />
+          <NavLink
+            href="/about"
+            label={dict.footer.aboutLink}
+            className="hidden rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 lg:inline"
+          />
+          <NavLink
+            href="/faq"
+            label={dict.footer.faqLink}
+            className="hidden rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 lg:inline"
+          />
+          <NavLink
+            href="/contact"
+            label={dict.footer.contactLink}
+            className="hidden rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 lg:inline"
+          />
           <LanguageSelector locale={locale} />
           <BookNavLink
             label={dict.header.book}

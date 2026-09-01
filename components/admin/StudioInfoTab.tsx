@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { StudioInfo } from "@/lib/types";
 import { upsertStudioInfo } from "@/app/actions/admin";
 import { uploadPhoto } from "@/lib/uploadPhoto";
+import { PhotoField } from "@/components/admin/PhotoField";
 
 export function StudioInfoTab({ studio }: { studio: StudioInfo | null }) {
   const [pending, setPending] = useState(false);
@@ -71,17 +72,13 @@ export function StudioInfoTab({ studio }: { studio: StudioInfo | null }) {
         {[1, 2, 3, 4, 5, 6, 7].map((i) => {
           const existingUrl = studio?.[`photo_${i}_url` as "photo_1_url"];
           return (
-            <div key={i} className="space-y-2 rounded-xl bg-sage-50/60 p-4">
-              <label className="block text-sm font-medium text-charcoal">
-                Studio photo {i} {i > 2 && <span className="font-normal text-charcoal/40">(optional)</span>}
-              </label>
-              <input name={`photo_${i}`} type="file" accept="image/*" className="w-full text-sm" />
-              {existingUrl && (
-                <label className="flex items-center gap-2 text-xs text-charcoal/60">
-                  <input type="checkbox" name={`remove_photo_${i}`} />
-                  Remove current photo
-                </label>
-              )}
+            <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+              <PhotoField
+                name={`photo_${i}`}
+                label={`Studio photo ${i}${i > 2 ? " (optional)" : ""}`}
+                existingUrl={existingUrl}
+                removeName={`remove_photo_${i}`}
+              />
             </div>
           );
         })}

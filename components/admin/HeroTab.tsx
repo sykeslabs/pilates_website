@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { HeroSection } from "@/lib/types";
 import { upsertHeroSection } from "@/app/actions/admin";
 import { uploadPhoto } from "@/lib/uploadPhoto";
+import { PhotoField } from "@/components/admin/PhotoField";
 
 const SLOT_LABELS = [
   "Photo 1 (required for both modes)",
@@ -84,17 +85,13 @@ export function HeroTab({ hero }: { hero: HeroSection | null }) {
           {Array.from({ length: slotCount }, (_, idx) => idx + 1).map((i) => {
             const existingUrl = hero?.[`photo_${i}_url` as "photo_1_url"];
             return (
-              <div key={i} className="space-y-2 rounded-xl bg-sage-50/60 p-4">
-                <label className="block text-sm font-medium text-charcoal">
-                  {SLOT_LABELS[i - 1]}
-                </label>
-                <input name={`photo_${i}`} type="file" accept="image/*" className="w-full text-sm" />
-                {existingUrl && (
-                  <label className="flex items-center gap-2 text-xs text-charcoal/60">
-                    <input type="checkbox" name={`remove_photo_${i}`} />
-                    Remove current photo
-                  </label>
-                )}
+              <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+                <PhotoField
+                  name={`photo_${i}`}
+                  label={SLOT_LABELS[i - 1]}
+                  existingUrl={existingUrl}
+                  removeName={`remove_photo_${i}`}
+                />
               </div>
             );
           })}

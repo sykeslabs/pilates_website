@@ -11,6 +11,9 @@ export type CourseType = {
   brief_description_de: string;
   brief_description_fr: string;
   photo_url: string | null;
+  badge_label: string | null;
+  badge_label_de: string | null;
+  badge_label_fr: string | null;
   duration_minutes: number;
   capacity_default: number;
   price_chf: number | null;
@@ -102,6 +105,18 @@ export type CoursePageSettings = {
   value_icon_1_url: string | null;
   value_icon_2_url: string | null;
   value_icon_3_url: string | null;
+  hero_photo_1_url: string | null;
+  hero_photo_2_url: string | null;
+  hero_photo_3_url: string | null;
+  updated_at: string;
+};
+
+export type HomeBenefitsSettings = {
+  id: string;
+  icon_1_url: string | null;
+  icon_2_url: string | null;
+  icon_3_url: string | null;
+  icon_4_url: string | null;
   updated_at: string;
 };
 

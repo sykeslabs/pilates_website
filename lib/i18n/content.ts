@@ -37,6 +37,20 @@ export function courseBriefDescription(
   return brief ? brief : courseDescription(course, locale);
 }
 
+export function courseBadgeLabel(
+  course: Pick<CourseType, "badge_label" | "badge_label_de" | "badge_label_fr">,
+  locale: Locale,
+): string | null {
+  const preferred =
+    locale === "de"
+      ? course.badge_label_de
+      : locale === "fr"
+        ? course.badge_label_fr
+        : course.badge_label;
+  if (preferred && preferred.trim()) return preferred;
+  return course.badge_label && course.badge_label.trim() ? course.badge_label : null;
+}
+
 export function storyQuote(story: Pick<SuccessStory, "quote" | "quote_de" | "quote_fr">, locale: Locale) {
   return pickLocalized(story.quote, story.quote_de, story.quote_fr, locale);
 }

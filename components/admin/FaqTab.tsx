@@ -105,6 +105,18 @@ export function FaqTab({ faqs }: { faqs: Faq[] }) {
   return (
     <div className="space-y-4">
       {error && <p className="text-sm text-red-600">{error}</p>}
+
+      {adding ? (
+        <FaqForm faq={null} onDone={() => setAdding(false)} />
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          className="w-full rounded-2xl bg-sage-700 py-4 text-sm font-medium text-white transition hover:bg-sage-500"
+        >
+          + Add a question
+        </button>
+      )}
+
       {faqs.map((faq) =>
         editingId === faq.id ? (
           <FaqForm key={faq.id} faq={faq} onDone={() => setEditingId(null)} />
@@ -134,17 +146,6 @@ export function FaqTab({ faqs }: { faqs: Faq[] }) {
             </div>
           </div>
         ),
-      )}
-
-      {adding ? (
-        <FaqForm faq={null} onDone={() => setAdding(false)} />
-      ) : (
-        <button
-          onClick={() => setAdding(true)}
-          className="w-full rounded-2xl border border-dashed border-sage-300 py-4 text-sm font-medium text-sage-700 hover:bg-sage-50"
-        >
-          + Add a question
-        </button>
       )}
     </div>
   );

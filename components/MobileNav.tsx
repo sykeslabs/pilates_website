@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { courseName } from "@/lib/i18n/content";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
@@ -21,6 +22,7 @@ export function MobileNav({
   const [open, setOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -69,7 +71,7 @@ export function MobileNav({
                 <Link
                   href="/courses"
                   onClick={() => setOpen(false)}
-                  className="hover:text-sage-700"
+                  className={`hover:font-semibold hover:text-sage-700 ${pathname === "/courses" ? "underline underline-offset-4" : ""}`}
                 >
                   {dict.header.courses}
                 </Link>
@@ -102,7 +104,7 @@ export function MobileNav({
                       key={course.id}
                       href={`/courses#${course.slug}`}
                       onClick={() => setOpen(false)}
-                      className="text-charcoal/70 hover:text-sage-700"
+                      className="text-charcoal/70 hover:font-semibold hover:text-sage-700"
                     >
                       {courseName(course, locale)}
                     </Link>
@@ -115,7 +117,7 @@ export function MobileNav({
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="hover:text-sage-700"
+                className={`hover:font-semibold hover:text-sage-700 ${pathname === link.href ? "underline underline-offset-4" : ""}`}
               >
                 {link.label}
               </Link>

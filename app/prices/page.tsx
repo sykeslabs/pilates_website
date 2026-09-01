@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { courseName } from "@/lib/i18n/content";
+import { courseName, courseBadgeLabel } from "@/lib/i18n/content";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import type { CourseType } from "@/lib/types";
@@ -32,7 +32,14 @@ export default async function PricesPage() {
         {courses?.map((course) => (
           <div key={course.id} className="p-5">
             <div className="flex items-start justify-between gap-3">
-              <div className="font-medium text-charcoal">{courseName(course, locale)}</div>
+              <div>
+                <div className="font-bold text-charcoal">{courseName(course, locale)}</div>
+                {courseBadgeLabel(course, locale) && (
+                  <span className="mt-1 inline-block rounded-full bg-terracotta-500/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-terracotta-500">
+                    {courseBadgeLabel(course, locale)}
+                  </span>
+                )}
+              </div>
               <div className="shrink-0 text-sm text-sage-700">
                 {course.price_chf != null
                   ? `CHF ${course.price_chf.toFixed(2)} ${
@@ -69,8 +76,13 @@ export default async function PricesPage() {
           <tbody>
             {courses?.map((course) => (
               <tr key={course.id} className="border-t border-sage-100">
-                <td className="px-6 py-4 font-medium text-charcoal">
-                  {courseName(course, locale)}
+                <td className="px-6 py-4 font-bold text-charcoal">
+                  <div>{courseName(course, locale)}</div>
+                  {courseBadgeLabel(course, locale) && (
+                    <span className="mt-1 inline-block rounded-full bg-terracotta-500/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-terracotta-500">
+                      {courseBadgeLabel(course, locale)}
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 text-charcoal/70">
                   {course.duration_minutes} {dict.common.minutesShort}

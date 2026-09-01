@@ -5,6 +5,7 @@ import type { Instructor } from "@/lib/types";
 import { upsertInstructor } from "@/app/actions/admin";
 import { uploadPhoto } from "@/lib/uploadPhoto";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { PhotoField } from "@/components/admin/PhotoField";
 
 const GALLERY_SLOTS = [1, 2, 3, 4, 5, 6, 7] as const;
 
@@ -90,19 +91,15 @@ export function AboutTab({ instructor }: { instructor: Instructor | null }) {
           </div>
         </div>
       ))}
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Portrait photo</label>
-        <input name="photo" type="file" accept="image/*" className="mt-1 w-full text-sm" />
-        <p className="mt-1 text-xs text-charcoal/50">
-          {instructor?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
-        </p>
-        {instructor?.photo_url && (
-          <label className="mt-2 flex items-center gap-2 text-xs text-charcoal/60">
-            <input type="checkbox" name="remove_photo" />
-            Remove current photo
-          </label>
-        )}
-      </div>
+      <PhotoField
+        name="photo"
+        label="Portrait photo"
+        existingUrl={instructor?.photo_url}
+        removeName="remove_photo"
+        hint={
+          instructor?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."
+        }
+      />
 
       <div className="space-y-4">
         <p className="text-sm font-medium text-charcoal">
@@ -111,15 +108,13 @@ export function AboutTab({ instructor }: { instructor: Instructor | null }) {
         {GALLERY_SLOTS.map((i) => {
           const existingUrl = instructor?.[`photo_${i}_url` as "photo_1_url"];
           return (
-            <div key={i} className="space-y-2 rounded-xl bg-sage-50/60 p-4">
-              <label className="block text-sm font-medium text-charcoal">Photo {i}</label>
-              <input name={`photo_${i}`} type="file" accept="image/*" className="w-full text-sm" />
-              {existingUrl && (
-                <label className="flex items-center gap-2 text-xs text-charcoal/60">
-                  <input type="checkbox" name={`remove_photo_${i}`} />
-                  Remove current photo
-                </label>
-              )}
+            <div key={i} className="rounded-xl bg-sage-50/60 p-4">
+              <PhotoField
+                name={`photo_${i}`}
+                label={`Photo ${i}`}
+                existingUrl={existingUrl}
+                removeName={`remove_photo_${i}`}
+              />
             </div>
           );
         })}

@@ -6,6 +6,7 @@ import { notifyBooking, notifyWaitlistJoin } from "@/app/actions/booking";
 import { courseName } from "@/lib/i18n/content";
 import { localeTags, type Locale } from "@/lib/i18n/config";
 import { downloadIcsFile } from "@/lib/ics";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import type { Dictionary } from "@/messages/en";
 import type { AvailabilitySlot, CourseType } from "@/lib/types";
 
@@ -218,15 +219,64 @@ export function BookingFlow({
     );
   }
 
+  const currentStep = confirmed
+    ? 4
+    : selectedSlots.length > 0
+      ? 3
+      : selectedCourses.length > 0
+        ? 2
+        : 1;
+
+  const stepper = (
+    <div className="mb-8 flex items-center justify-center gap-2">
+      {[
+        dict.book.progressCourse,
+        dict.book.progressTime,
+        dict.book.progressDetails,
+        dict.book.progressConfirmation,
+      ].map((label, i) => {
+        const step = i + 1;
+        const active = step === currentStep;
+        const done = step < currentStep;
+        return (
+          <div key={label} className="flex items-center gap-2">
+            {i > 0 && <span className="h-px w-6 bg-sage-100" />}
+            <span
+              className={`flex items-center gap-1.5 text-xs font-medium ${
+                active ? "text-sage-700" : done ? "text-sage-500" : "text-charcoal/40"
+              }`}
+            >
+              <span
+                className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${
+                  active || done ? "bg-sage-700 text-white" : "bg-sage-100 text-charcoal/50"
+                }`}
+              >
+                {done ? "✓" : step}
+              </span>
+              <span className="hidden sm:inline">{label}</span>
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   if (confirmed && bookingResults.length > 0) {
     const allWaitlisted = bookingResults.every((r) => r.waitlisted);
     const anyWaitlisted = bookingResults.some((r) => r.waitlisted);
     const hasConfirmedBookings = bookingResults.some((r) => !r.waitlisted);
     return (
-      <div className="rounded-2xl border border-sage-100 bg-white p-8 text-center shadow-sm">
+      <div>
+        {stepper}
+        <div className="rounded-2xl border border-sage-100 bg-white p-8 text-center shadow-sm">
         <h2 className="text-2xl font-semibold text-charcoal">
           {allWaitlisted ? dict.book.waitlistConfirmedTitle : dict.book.confirmedTitle}
         </h2>
+        {name && (
+          <p className="mt-1 text-sm text-charcoal/60">
+            {dict.book.confirmedThankYou.replace("{name}", name)}
+          </p>
+        )}
         <ul className="mt-4 space-y-2 text-left">
           {bookingResults.map((r) => (
             <li
@@ -263,12 +313,15 @@ export function BookingFlow({
         {partialFailureCount > 0 && (
           <p className="mt-3 text-sm text-red-600">{dict.book.genericBookError}</p>
         )}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10">
+    <div>
+      {stepper}
+      <div className="space-y-10">
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-wide text-sage-700">
           {dict.book.step1}
@@ -285,7 +338,7 @@ export function BookingFlow({
                 className={`rounded-xl border p-4 text-left transition ${
                   isSelected
                     ? "border-sage-700 bg-sage-50"
-                    : "border-sage-100 bg-white hover:border-sage-300"
+                    : "border-sage-100 bg-white hover:border-sage-300 hover:bg-sage-50"
                 }`}
               >
                 <div className="font-medium text-charcoal">{courseName(course, locale)}</div>
@@ -323,7 +376,11 @@ export function BookingFlow({
                     const isSelected = selectedSlots.some((s) => s.id === slot.id);
                     const slotCourse = courses.find((c) => c.id === slot.course_type_id);
                     return (
-                      <div key={slot.id} className={`p-4 ${isSelected ? "bg-sage-50" : "bg-white"}`}>
+                      <div
+                        key={slot.id}
+                        onClick={() => toggleSlot(slot)}
+                        className={`cursor-pointer p-4 transition ${isSelected ? "bg-sage-50" : "bg-white hover:bg-sage-50"}`}
+                      >
                         <div className="flex items-center justify-between gap-3">
                           <div>
                             {slotCourse && (
@@ -339,15 +396,23 @@ export function BookingFlow({
                             </div>
                           </div>
                           <div className="shrink-0 text-sm text-charcoal/70">
-                            {isFull
-                              ? dict.book.fullBadge
-                              : `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`}
+                            {isFull ? (
+                              <>
+                                {dict.book.fullBadge}
+                                <InfoTooltip text={dict.book.waitlistTooltip} />
+                              </>
+                            ) : (
+                              `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`
+                            )}
                           </div>
                         </div>
                         <button
                           type="button"
                           aria-pressed={isSelected}
-                          onClick={() => toggleSlot(slot)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSlot(slot);
+                          }}
                           className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-medium transition ${
                             isSelected
                               ? "bg-sage-700 text-white"
@@ -356,7 +421,11 @@ export function BookingFlow({
                                 : "border border-sage-100 text-charcoal hover:border-sage-300"
                           }`}
                         >
-                          {isFull ? dict.book.joinWaitlistAction : dict.book.bookAction}
+                          {isSelected
+                            ? dict.book.selectedAction
+                            : isFull
+                              ? dict.book.joinWaitlistAction
+                              : dict.book.bookAction}
                         </button>
                       </div>
                     );
@@ -382,8 +451,9 @@ export function BookingFlow({
                         return (
                           <tr
                             key={slot.id}
-                            className={`border-t border-sage-100 ${
-                              isSelected ? "bg-sage-50" : "bg-white"
+                            onClick={() => toggleSlot(slot)}
+                            className={`cursor-pointer border-t border-sage-100 transition ${
+                              isSelected ? "bg-sage-50" : "bg-white hover:bg-sage-50"
                             }`}
                           >
                             <td className="px-4 py-3 text-charcoal">
@@ -396,15 +466,23 @@ export function BookingFlow({
                               {timeFormatter.format(new Date(slot.start_time))}
                             </td>
                             <td className="px-4 py-3 text-charcoal/70">
-                              {isFull
-                                ? dict.book.fullBadge
-                                : `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`}
+                              {isFull ? (
+                                <>
+                                  {dict.book.fullBadge}
+                                  <InfoTooltip text={dict.book.waitlistTooltip} />
+                                </>
+                              ) : (
+                                `${slot.capacity - slot.booked_count} ${dict.book.spotsLeftLabel}`
+                              )}
                             </td>
                             <td className="px-4 py-3 text-right">
                               <button
                                 type="button"
                                 aria-pressed={isSelected}
-                                onClick={() => toggleSlot(slot)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleSlot(slot);
+                                }}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
                                   isSelected
                                     ? "bg-sage-700 text-white"
@@ -413,7 +491,11 @@ export function BookingFlow({
                                       : "border border-sage-100 text-charcoal hover:border-sage-300"
                                 }`}
                               >
-                                {isFull ? dict.book.joinWaitlistAction : dict.book.bookAction}
+                                {isSelected
+                                  ? dict.book.selectedAction
+                                  : isFull
+                                    ? dict.book.joinWaitlistAction
+                                    : dict.book.bookAction}
                               </button>
                             </td>
                           </tr>
@@ -503,6 +585,7 @@ export function BookingFlow({
           </form>
         </div>
       )}
+      </div>
     </div>
   );
 }

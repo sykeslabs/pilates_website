@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { courseName, courseBriefDescription } from "@/lib/i18n/content";
+import { courseName, courseBriefDescription, courseBadgeLabel } from "@/lib/i18n/content";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
 import type { CourseType } from "@/lib/types";
@@ -12,9 +12,10 @@ export function CourseCard({
 }: {
   course: CourseType;
   locale: Locale;
-  dict: Pick<Dictionary, "common" | "courseCard">;
+  dict: Pick<Dictionary, "common" | "courseCard" | "coursesPage">;
 }) {
   const name = courseName(course, locale);
+  const badge = courseBadgeLabel(course, locale);
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-sage-100 bg-white shadow-sm transition hover:shadow-md">
@@ -28,6 +29,11 @@ export function CourseCard({
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
           />
         )}
+        {badge && (
+          <span className="absolute left-3 top-3 rounded-full bg-terracotta-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">
+            {badge}
+          </span>
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
@@ -36,7 +42,10 @@ export function CourseCard({
         </div>
         <div className="mt-auto flex items-center justify-between pt-2 text-sm text-charcoal/60">
           <span>
-            {course.duration_minutes} {dict.common.minutesShort}
+            {course.duration_minutes} {dict.common.minutesShort} ·{" "}
+            {course.class_type === "private"
+              ? dict.coursesPage.capacityPrivate
+              : `${dict.common.maxGroupSize} ${course.capacity_default}`}
           </span>
           {course.price_chf != null && (
             <span className="font-medium text-sage-700">

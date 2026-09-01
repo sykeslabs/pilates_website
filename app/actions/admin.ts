@@ -50,6 +50,9 @@ export async function upsertCourseType(formData: FormData) {
   const brief_description = formData.get("brief_description")?.toString().trim() ?? "";
   const brief_description_de = formData.get("brief_description_de")?.toString().trim() ?? "";
   const brief_description_fr = formData.get("brief_description_fr")?.toString().trim() ?? "";
+  const badge_label = formData.get("badge_label")?.toString().trim() || null;
+  const badge_label_de = formData.get("badge_label_de")?.toString().trim() || null;
+  const badge_label_fr = formData.get("badge_label_fr")?.toString().trim() || null;
   const duration_minutes = Number(formData.get("duration_minutes"));
   const capacity_default = Number(formData.get("capacity_default"));
   const priceRaw = formData.get("price_chf")?.toString().trim();
@@ -77,6 +80,9 @@ export async function upsertCourseType(formData: FormData) {
         brief_description,
         brief_description_de,
         brief_description_fr,
+        badge_label,
+        badge_label_de,
+        badge_label_fr,
         duration_minutes,
         capacity_default,
         price_chf,
@@ -97,6 +103,9 @@ export async function upsertCourseType(formData: FormData) {
       brief_description,
       brief_description_de,
       brief_description_fr,
+      badge_label,
+      badge_label_de,
+      badge_label_fr,
       duration_minutes,
       capacity_default,
       price_chf,
@@ -333,7 +342,10 @@ export async function upsertCoursePageSettings(formData: FormData) {
   const supabase = await createClient();
 
   const id = formData.get("id")?.toString() || null;
-  const values = photoSlotValues(formData, 3, "value_icon");
+  const values = {
+    ...photoSlotValues(formData, 3, "value_icon"),
+    ...photoSlotValues(formData, 3, "hero_photo"),
+  };
 
   if (id) {
     const { error } = await supabase.from("course_page_settings").update(values).eq("id", id);
@@ -345,6 +357,24 @@ export async function upsertCoursePageSettings(formData: FormData) {
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/courses");
+}
+
+export async function upsertHomeBenefitsSettings(formData: FormData) {
+  const supabase = await createClient();
+
+  const id = formData.get("id")?.toString() || null;
+  const values = photoSlotValues(formData, 4, "icon");
+
+  if (id) {
+    const { error } = await supabase.from("home_benefits_settings").update(values).eq("id", id);
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await supabase.from("home_benefits_settings").insert(values);
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/");
 }
 
 export async function deleteContactMessage(id: string) {

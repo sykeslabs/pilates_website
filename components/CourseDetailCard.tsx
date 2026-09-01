@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { courseName, courseDescription } from "@/lib/i18n/content";
+import { courseName, courseDescription, courseBadgeLabel } from "@/lib/i18n/content";
 import { localeTags, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/messages/en";
 import type { AvailabilitySlot, CourseType } from "@/lib/types";
@@ -17,6 +17,9 @@ export function CourseDetailCard({
   upcomingSlots: AvailabilitySlot[];
 }) {
   const name = courseName(course, locale);
+  const badge = courseBadgeLabel(course, locale);
+  const nextSlot = upcomingSlots[0];
+  const nextSlotSpotsLeft = nextSlot ? nextSlot.capacity - nextSlot.booked_count : null;
   const classTypeLabel =
     course.class_type === "private"
       ? dict.common.classTypePrivate
@@ -48,6 +51,11 @@ export function CourseDetailCard({
             className="object-cover"
             sizes="(min-width: 1024px) 50vw, 100vw"
           />
+        )}
+        {badge && (
+          <span className="absolute left-4 top-4 rounded-full bg-terracotta-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">
+            {badge}
+          </span>
         )}
       </div>
 
@@ -112,9 +120,16 @@ export function CourseDetailCard({
           )}
         </div>
 
+        {nextSlot && nextSlotSpotsLeft != null && nextSlotSpotsLeft > 0 && (
+          <p className="mt-6 text-sm font-medium text-terracotta-500">
+            {dateFormatter.format(new Date(nextSlot.start_time))} ·{" "}
+            {timeFormatter.format(new Date(nextSlot.start_time))} — {nextSlotSpotsLeft}{" "}
+            {dict.common.spotsLeft}
+          </p>
+        )}
         <Link
           href={`/book?course=${course.slug}`}
-          className="mt-10 inline-flex w-fit items-center justify-center rounded-full bg-sage-700 px-8 py-3 text-sm font-semibold text-white shadow transition hover:scale-[1.02] hover:bg-sage-500"
+          className="mt-4 inline-flex w-fit items-center justify-center rounded-full bg-sage-700 px-8 py-3 text-sm font-semibold text-white shadow transition hover:scale-[1.02] hover:bg-sage-500"
         >
           {dict.courseCard.checkAvailability}
         </Link>

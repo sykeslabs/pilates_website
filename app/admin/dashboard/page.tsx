@@ -9,6 +9,7 @@ import type {
   StudioInfo,
   ContactMessage,
   CoursePageSettings,
+  HomeBenefitsSettings,
 } from "@/lib/types";
 
 export default async function AdminDashboardPage() {
@@ -28,6 +29,7 @@ export default async function AdminDashboardPage() {
     { data: messages },
     { data: waitlistEntries },
     { data: coursePageSettings },
+    { data: homeBenefitsSettings },
   ] = await Promise.all([
     supabase
       .from("course_types")
@@ -45,7 +47,9 @@ export default async function AdminDashboardPage() {
       .order("start_time", { ascending: true }),
     supabase
       .from("bookings")
-      .select("*, availability_slots(start_time, end_time, course_types(name))")
+      .select(
+        "*, availability_slots(start_time, end_time, capacity, booked_count, course_types(name))",
+      )
       .order("created_at", { ascending: false })
       .limit(200),
     supabase.from("instructor").select("*").limit(1).maybeSingle<Instructor>(),
@@ -59,13 +63,20 @@ export default async function AdminDashboardPage() {
       .returns<ContactMessage[]>(),
     supabase
       .from("waitlist_entries")
-      .select("*, availability_slots(start_time, end_time, course_types(name))")
+      .select(
+        "*, availability_slots(start_time, end_time, capacity, booked_count, course_types(name))",
+      )
       .order("created_at", { ascending: false }),
     supabase
       .from("course_page_settings")
       .select("*")
       .limit(1)
       .maybeSingle<CoursePageSettings>(),
+    supabase
+      .from("home_benefits_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle<HomeBenefitsSettings>(),
   ]);
 
   return (
@@ -82,6 +93,7 @@ export default async function AdminDashboardPage() {
         studio={studio}
         messages={messages ?? []}
         coursePageSettings={coursePageSettings}
+        homeBenefitsSettings={homeBenefitsSettings}
       />
     </div>
   );

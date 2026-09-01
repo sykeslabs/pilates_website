@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { CourseType } from "@/lib/types";
 import { setCourseTypeActive, upsertCourseType } from "@/app/actions/admin";
 import { uploadPhoto } from "@/lib/uploadPhoto";
+import { PhotoField } from "@/components/admin/PhotoField";
 
 function slugify(name: string) {
   return name
@@ -92,6 +93,16 @@ function CourseForm({
               className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Badge <span className="font-normal text-charcoal/40">(optional — e.g. &quot;Most Popular&quot;)</span>
+            </label>
+            <input
+              name={`badge_label${lang.suffix}`}
+              defaultValue={course?.[`badge_label${lang.suffix}` as "badge_label"] ?? ""}
+              className="mt-1 w-full rounded-lg border border-sage-100 px-3 py-2 focus:border-sage-500 focus:outline-none"
+            />
+          </div>
         </div>
       ))}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -141,24 +152,13 @@ function CourseForm({
           />
         </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Photo</label>
-        <input
-          name="photo"
-          type="file"
-          accept="image/*"
-          className="mt-1 w-full text-sm"
-        />
-        <p className="mt-1 text-xs text-charcoal/50">
-          {course?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
-        </p>
-        {course?.photo_url && (
-          <label className="mt-2 flex items-center gap-2 text-xs text-charcoal/60">
-            <input type="checkbox" name="remove_photo" />
-            Remove current photo
-          </label>
-        )}
-      </div>
+      <PhotoField
+        name="photo"
+        label="Photo"
+        existingUrl={course?.photo_url}
+        removeName="remove_photo"
+        hint={course?.photo_url ? "Leave empty to keep the current photo." : "Optional for now."}
+      />
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">
         <button
@@ -198,6 +198,17 @@ export function CoursesTab({ courses }: { courses: CourseType[] }) {
 
   return (
     <div className="space-y-4">
+      {adding ? (
+        <CourseForm course={null} onDone={() => setAdding(false)} />
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          className="w-full rounded-2xl bg-sage-700 py-4 text-sm font-medium text-white transition hover:bg-sage-500"
+        >
+          + Add a course type
+        </button>
+      )}
+
       {courses.map((course) =>
         editingId === course.id ? (
           <CourseForm key={course.id} course={course} onDone={() => setEditingId(null)} />
@@ -244,17 +255,6 @@ export function CoursesTab({ courses }: { courses: CourseType[] }) {
             </div>
           </div>
         ),
-      )}
-
-      {adding ? (
-        <CourseForm course={null} onDone={() => setAdding(false)} />
-      ) : (
-        <button
-          onClick={() => setAdding(true)}
-          className="w-full rounded-2xl border border-dashed border-sage-300 py-4 text-sm font-medium text-sage-700 hover:bg-sage-50"
-        >
-          + Add a course type
-        </button>
       )}
     </div>
   );

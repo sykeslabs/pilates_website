@@ -30,15 +30,15 @@ export default async function FaqPage() {
         {faqs?.map((faq) => (
           <details
             key={faq.id}
-            className="group rounded-2xl border border-sage-100 bg-white p-5 open:shadow-sm"
+            className="group rounded-2xl border border-sage-100 bg-white open:shadow-sm"
           >
-            <summary className="cursor-pointer list-none font-medium text-charcoal marker:content-none">
+            <summary className="cursor-pointer list-none rounded-2xl p-5 font-medium text-charcoal marker:content-none transition hover:bg-sage-50 group-open:hover:bg-transparent">
               <span className="flex items-center justify-between gap-4">
                 {faqQuestion(faq, locale)}
                 <span className="shrink-0 text-sage-700 transition group-open:rotate-45">+</span>
               </span>
             </summary>
-            <p className="mt-3 text-sm leading-relaxed text-charcoal/70">
+            <p className="px-5 pb-5 text-sm leading-relaxed text-charcoal/70">
               {faqAnswer(faq, locale)}
             </p>
           </details>

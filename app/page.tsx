@@ -4,16 +4,31 @@ import { CourseCard } from "@/components/CourseCard";
 import { SuccessStoryCard } from "@/components/SuccessStoryCard";
 import { Carousel } from "@/components/Carousel";
 import { HeroPhotoCollage } from "@/components/HeroPhotoCollage";
+import { FindYourClass } from "@/components/FindYourClass";
+import { BenefitsSection } from "@/components/BenefitsSection";
+import { InstructorTeaser } from "@/components/InstructorTeaser";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
-import type { CourseType, SuccessStory, HeroSection } from "@/lib/types";
+import type {
+  CourseType,
+  SuccessStory,
+  HeroSection,
+  Instructor,
+  HomeBenefitsSettings,
+} from "@/lib/types";
 
 export default async function HomePage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
 
-  const [{ data: courses }, { data: stories }, { data: hero }] = await Promise.all([
+  const [
+    { data: courses },
+    { data: stories },
+    { data: hero },
+    { data: instructor },
+    { data: benefitsSettings },
+  ] = await Promise.all([
     supabase
       .from("course_types")
       .select("*")
@@ -27,6 +42,12 @@ export default async function HomePage() {
       .limit(7)
       .returns<SuccessStory[]>(),
     supabase.from("hero_section").select("*").limit(1).maybeSingle<HeroSection>(),
+    supabase.from("instructor").select("*").limit(1).maybeSingle<Instructor>(),
+    supabase
+      .from("home_benefits_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle<HomeBenefitsSettings>(),
   ]);
 
   const heroPhotos = hero
@@ -45,12 +66,20 @@ export default async function HomePage() {
         : "illustration";
 
   const heroCta = (
-    <Link
-      href="/book"
-      className="mt-8 inline-flex items-center justify-center rounded-full bg-sage-700 px-8 py-3 text-sm font-semibold text-white shadow transition hover:bg-sage-500"
-    >
-      {dict.home.heroCta}
-    </Link>
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+      <Link
+        href="#find-your-class"
+        className="inline-flex items-center justify-center rounded-full bg-sage-700 px-8 py-3 text-sm font-semibold text-white shadow transition hover:bg-sage-500"
+      >
+        {dict.home.heroCta}
+      </Link>
+      <Link
+        href="/courses"
+        className="inline-flex items-center justify-center rounded-full border border-sage-300 px-8 py-3 text-sm font-semibold text-charcoal transition hover:border-sage-500"
+      >
+        {dict.home.heroCtaSecondary}
+      </Link>
+    </div>
   );
 
   return (
@@ -92,19 +121,29 @@ export default async function HomePage() {
               {dict.home.heroTitle}
             </h1>
             <p className="mt-4 text-lg text-white/90">{dict.home.heroSubtitle}</p>
-            <Link
-              href="/book"
-              className="mt-8 inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-sage-700 shadow transition hover:bg-cream"
-            >
-              {dict.home.heroCta}
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="#find-your-class"
+                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-sage-700 shadow transition hover:bg-cream"
+              >
+                {dict.home.heroCta}
+              </Link>
+              <Link
+                href="/courses"
+                className="inline-flex items-center justify-center rounded-full border border-white/70 px-8 py-3 text-sm font-semibold text-white transition hover:border-white"
+              >
+                {dict.home.heroCtaSecondary}
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
+      <FindYourClass courses={courses ?? []} locale={locale} dict={dict} />
+
       <section
         id="courses"
-        className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-20 lg:min-h-screen"
+        className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-30 lg:min-h-screen"
       >
         <div className="mx-auto w-full max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
@@ -134,7 +173,7 @@ export default async function HomePage() {
       {stories && stories.length > 0 && (
         <section
           id="stories"
-          className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-30 lg:min-h-screen"
+          className="flex flex-col justify-center bg-sage-50 px-6 py-20 lg:sticky lg:top-16 lg:z-40 lg:min-h-screen"
         >
           <div className="mx-auto w-full max-w-6xl">
             <div className="mx-auto max-w-2xl text-center">
@@ -147,13 +186,15 @@ export default async function HomePage() {
               <p className="mt-4 text-charcoal/70">{dict.home.storiesSubheading}</p>
             </div>
             <div className="mt-12">
-              <Carousel
-                previousLabel={dict.common.previous}
-                nextLabel={dict.common.next}
-                dynamicHeight
-              >
+              <Carousel previousLabel={dict.common.previous} nextLabel={dict.common.next}>
                 {stories.map((story) => (
-                  <SuccessStoryCard key={story.id} story={story} locale={locale} compact />
+                  <SuccessStoryCard
+                    key={story.id}
+                    story={story}
+                    locale={locale}
+                    courses={courses ?? []}
+                    compact
+                  />
                 ))}
               </Carousel>
             </div>
@@ -166,7 +207,11 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="flex flex-col justify-center bg-sage-50 px-6 py-20 lg:sticky lg:top-16 lg:z-40 lg:min-h-screen">
+      <BenefitsSection dict={dict} settings={benefitsSettings} />
+
+      {instructor && <InstructorTeaser instructor={instructor} locale={locale} dict={dict} />}
+
+      <section className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-[70] lg:min-h-screen">
         <div className="mx-auto w-full max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
             {dict.home.stepsEyebrow}
@@ -174,16 +219,44 @@ export default async function HomePage() {
           <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl italic tracking-tight text-charcoal sm:text-4xl">
             {dict.home.stepsHeading}
           </h2>
-          <div className="mt-12 grid grid-cols-1 gap-8 text-left sm:grid-cols-3">
-            {dict.home.steps.map((item, i) => (
-              <div key={item.title} className="rounded-2xl bg-white p-6 shadow-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sage-700 text-sm font-semibold text-white">
-                  {i + 1}
-                </span>
-                <h3 className="mt-4 font-semibold text-charcoal">{item.title}</h3>
-                <p className="mt-1 text-sm text-charcoal/70">{item.body}</p>
+          <p className="mt-4 text-charcoal/70">{dict.home.stepsSubheading}</p>
+          <div className="mt-12 flex flex-col sm:flex-row sm:items-stretch">
+            {dict.home.steps.map((item, i) => {
+              return (
+              <div key={item.title} className="flex flex-1 flex-col sm:flex-row sm:items-center">
+                <div className="flex flex-1 items-center gap-4 rounded-2xl bg-white p-6 text-left shadow-sm">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-sage-50 text-lg font-semibold text-sage-700">
+                    {i + 1}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-charcoal">{item.title}</h3>
+                    <p className="mt-1 text-sm text-charcoal/70">{item.body}</p>
+                  </div>
+                </div>
+                {i < dict.home.steps.length - 1 && (
+                  <div className="flex items-center justify-center py-2 sm:px-2 sm:py-0">
+                    <span className="text-2xl leading-none text-terracotta-500 sm:hidden">↓</span>
+                    <span className="hidden text-2xl leading-none text-terracotta-500 sm:inline">
+                      →
+                    </span>
+                  </div>
+                )}
               </div>
-            ))}
+              );
+            })}
+          </div>
+
+          <div className="mx-auto mt-16 max-w-3xl rounded-3xl bg-sage-700 px-8 py-12 text-center text-cream">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl italic sm:text-4xl">
+              {dict.aboutPage.ctaHeading}
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-cream/85">{dict.aboutPage.ctaBody}</p>
+            <Link
+              href="/book"
+              className="mt-6 inline-block rounded-full bg-cream px-8 py-3 text-sm font-semibold text-sage-700 transition hover:bg-white"
+            >
+              {dict.aboutPage.ctaButton}
+            </Link>
           </div>
         </div>
       </section>

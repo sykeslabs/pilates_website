@@ -1,19 +1,23 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SuccessStoryCard } from "@/components/SuccessStoryCard";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
-import type { SuccessStory } from "@/lib/types";
+import type { CourseType, SuccessStory } from "@/lib/types";
 
 export default async function StoriesPage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const supabase = await createClient();
-  const { data: stories } = await supabase
-    .from("success_stories")
-    .select("*")
-    .order("display_order", { ascending: true })
-    .returns<SuccessStory[]>();
+  const [{ data: stories }, { data: courses }] = await Promise.all([
+    supabase
+      .from("success_stories")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .returns<SuccessStory[]>(),
+    supabase.from("course_types").select("*").returns<CourseType[]>(),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
@@ -31,11 +35,24 @@ export default async function StoriesPage() {
         <div className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3">
           {stories.map((story) => (
             <div key={story.id} className="mb-6 break-inside-avoid">
-              <SuccessStoryCard story={story} locale={locale} />
+              <SuccessStoryCard story={story} locale={locale} courses={courses ?? []} />
             </div>
           ))}
         </div>
       )}
+
+      <div className="mx-auto mt-16 max-w-3xl rounded-3xl bg-sage-700 px-8 py-12 text-center text-cream">
+        <h2 className="font-[family-name:var(--font-display)] text-3xl italic sm:text-4xl">
+          {dict.aboutPage.ctaHeading}
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-cream/85">{dict.aboutPage.ctaBody}</p>
+        <Link
+          href="/book"
+          className="mt-6 inline-block rounded-full bg-cream px-8 py-3 text-sm font-semibold text-sage-700 transition hover:bg-white"
+        >
+          {dict.aboutPage.ctaButton}
+        </Link>
+      </div>
     </div>
   );
 }

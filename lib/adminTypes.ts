@@ -6,7 +6,7 @@ export type SlotWithCourse = AvailabilitySlot & {
 
 export type BookingWithSlot = Booking & {
   availability_slots:
-    | (Pick<AvailabilitySlot, "start_time" | "end_time"> & {
+    | (Pick<AvailabilitySlot, "start_time" | "end_time" | "capacity" | "booked_count"> & {
         course_types: { name: string } | null;
       })
     | null;
@@ -14,7 +14,7 @@ export type BookingWithSlot = Booking & {
 
 export type WaitlistEntryWithSlot = WaitlistEntry & {
   availability_slots:
-    | (Pick<AvailabilitySlot, "start_time" | "end_time"> & {
+    | (Pick<AvailabilitySlot, "start_time" | "end_time" | "capacity" | "booked_count"> & {
         course_types: { name: string } | null;
       })
     | null;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { MobileStickyBookBar } from "@/components/MobileStickyBookBar";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import { createClient } from "@/lib/supabase/server";
@@ -46,12 +47,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full scroll-smooth antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Header locale={locale} dict={dict} courses={navCourses ?? []} />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-20 lg:pb-0">{children}</main>
         <Footer dict={dict} />
+        <MobileStickyBookBar label={dict.header.book} />
       </body>
     </html>
   );

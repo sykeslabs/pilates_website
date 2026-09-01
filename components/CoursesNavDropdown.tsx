@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { courseName } from "@/lib/i18n/content";
 import type { Locale } from "@/lib/i18n/config";
 import type { CourseType } from "@/lib/types";
@@ -19,6 +20,8 @@ export function CoursesNavDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isActive = pathname === "/courses";
 
   useEffect(() => {
     if (!open) return;
@@ -33,7 +36,10 @@ export function CoursesNavDropdown({
 
   return (
     <div ref={containerRef} className="relative flex items-center">
-      <Link href="/courses" className="hover:text-sage-700">
+      <Link
+        href="/courses"
+        className={`rounded-full px-3 py-1.5 transition hover:bg-sage-50 hover:font-semibold hover:text-sage-700 ${isActive ? "underline underline-offset-4" : ""}`}
+      >
         {label}
       </Link>
       {courses.length > 0 && (
@@ -65,7 +71,7 @@ export function CoursesNavDropdown({
               key={course.id}
               href={`/courses#${course.slug}`}
               onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-sm text-charcoal hover:bg-sage-50 hover:text-sage-700"
+              className="block px-4 py-2 text-sm text-charcoal hover:bg-sage-50 hover:font-semibold hover:text-sage-700"
             >
               {courseName(course, locale)}
             </Link>
