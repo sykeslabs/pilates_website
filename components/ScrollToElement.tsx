@@ -2,24 +2,25 @@
 
 import { useEffect } from "react";
 
-// Deep-linking into these sticky, full-viewport course sections via a plain
-// hash + native scrollIntoView proved unreliable (landed one section off).
-// This actively re-aligns the target to sit just below the sticky header
-// every frame for a short window, self-correcting regardless of whatever
-// else is nudging scroll position during that window.
+// Deep-linking via a plain hash + native scrollIntoView proved unreliable on
+// the sticky, full-viewport course sections (landed one section off). This
+// actively re-aligns the target to sit just below the sticky header every
+// frame for a short window, self-correcting regardless of whatever else is
+// nudging scroll position during that window. Reused anywhere a page needs
+// to land the viewport on a specific element after a query-param navigation.
 const HEADER_OFFSET = 64;
 const MAX_FRAMES = 20;
 
-export function ScrollToCourse({ slug }: { slug?: string }) {
+export function ScrollToElement({ id }: { id?: string }) {
   useEffect(() => {
-    if (!slug) return;
+    if (!id) return;
 
     let cancelled = false;
     let frame = 0;
 
     function alignOnce() {
       if (cancelled) return;
-      const el = document.getElementById(slug!);
+      const el = document.getElementById(id!);
       if (el) {
         const drift = el.getBoundingClientRect().top - HEADER_OFFSET;
         if (Math.abs(drift) > 1) {
@@ -38,7 +39,7 @@ export function ScrollToCourse({ slug }: { slug?: string }) {
       cancelled = true;
       cancelAnimationFrame(raf);
     };
-  }, [slug]);
+  }, [id]);
 
   return null;
 }

@@ -194,6 +194,7 @@ export default async function HomePage() {
                     locale={locale}
                     courses={courses ?? []}
                     compact
+                    linkToStory
                   />
                 ))}
               </Carousel>

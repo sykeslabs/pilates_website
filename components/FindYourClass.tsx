@@ -68,7 +68,7 @@ export function FindYourClass({
               <Link
                 key={option.slug}
                 href={`/courses?course=${option.slug}`}
-                className="group rounded-2xl border border-sage-100 bg-white p-6 transition hover:border-sage-300 hover:bg-sage-50 hover:shadow-md"
+                className="group rounded-2xl border border-sage-100 bg-white p-6 transition hover:border-sage-300 hover:bg-sand hover:shadow-md"
               >
                 <CardIcon>
                   <Icon />
@@ -84,7 +84,7 @@ export function FindYourClass({
           })}
           <Link
             href="/courses"
-            className="group rounded-2xl border border-dashed border-sage-300 bg-white p-6 transition hover:border-sage-500 hover:bg-sage-50 hover:shadow-md"
+            className="group rounded-2xl border border-dashed border-sage-300 bg-white p-6 transition hover:border-sage-500 hover:bg-sand hover:shadow-md"
           >
             <CardIcon>
               <QuestionIcon />
@@ -97,7 +97,7 @@ export function FindYourClass({
           </Link>
           <Link
             href="/contact#send-message"
-            className="group rounded-2xl border border-dashed border-sage-300 bg-white p-6 transition hover:border-sage-500 hover:bg-sage-50 hover:shadow-md"
+            className="group rounded-2xl border border-dashed border-sage-300 bg-white p-6 transition hover:border-sage-500 hover:bg-sand hover:shadow-md"
           >
             <CardIcon>
               <ChatIcon />

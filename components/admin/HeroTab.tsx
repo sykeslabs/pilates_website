@@ -68,6 +68,12 @@ export function HeroTab({ hero }: { hero: HeroSection | null }) {
       {hero && <input type="hidden" name="id" value={hero.id} />}
       <div>
         <label className="block text-sm font-medium text-charcoal">Homepage hero layout</label>
+        <p className="mt-1 text-xs text-charcoal/50">
+          Controls the big banner at the very top of the homepage. &quot;Illustration&quot; shows a
+          simple graphic and needs no photo. &quot;Single photo&quot; shows one large photo — upload it
+          below. &quot;Collage&quot; shows 2-4 photos scattered and rotated for a playful look — upload
+          as many as you have (at least 2).
+        </p>
         <select
           name="layout"
           value={layout}

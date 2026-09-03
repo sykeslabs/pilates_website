@@ -2,7 +2,7 @@ import Image from "next/image";
 import { GroupIcon, CertificateIcon, CalendarIcon } from "@/components/BenefitIcons";
 import { createClient } from "@/lib/supabase/server";
 import { CourseDetailCard } from "@/components/CourseDetailCard";
-import { ScrollToCourse } from "@/components/ScrollToCourse";
+import { ScrollToElement } from "@/components/ScrollToElement";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import { nowIso } from "@/lib/time";
@@ -60,7 +60,7 @@ export default async function CoursesPage({ searchParams }: PageProps<"/courses"
 
   return (
     <div>
-      <ScrollToCourse slug={targetCourseSlug} />
+      <ScrollToElement id={targetCourseSlug} />
       <section className="flex flex-col justify-center bg-cream px-6 py-20 lg:sticky lg:top-16 lg:z-10 lg:min-h-screen">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-16 lg:grid-cols-2">
           <div className="relative order-2 mx-auto aspect-square w-full max-w-sm lg:order-1">

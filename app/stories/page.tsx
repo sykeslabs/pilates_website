@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SuccessStoryCard } from "@/components/SuccessStoryCard";
+import { ScrollToElement } from "@/components/ScrollToElement";
 import { getLocale } from "@/lib/i18n/getLocale";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import type { CourseType, SuccessStory } from "@/lib/types";
 
-export default async function StoriesPage() {
+export default async function StoriesPage({ searchParams }: PageProps<"/stories">) {
+  const params = await searchParams;
+  const highlightedStoryId = typeof params.story === "string" ? params.story : undefined;
+
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
@@ -21,6 +25,7 @@ export default async function StoriesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
+      <ScrollToElement id={highlightedStoryId ? `story-${highlightedStoryId}` : undefined} />
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-500">
           {dict.storiesPage.eyebrow}
@@ -34,8 +39,17 @@ export default async function StoriesPage() {
       {stories && stories.length > 0 && (
         <div className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3">
           {stories.map((story) => (
-            <div key={story.id} className="mb-6 break-inside-avoid">
-              <SuccessStoryCard story={story} locale={locale} courses={courses ?? []} />
+            <div
+              key={story.id}
+              id={`story-${story.id}`}
+              className="mb-6 scroll-mt-20 break-inside-avoid"
+            >
+              <SuccessStoryCard
+                story={story}
+                locale={locale}
+                courses={courses ?? []}
+                highlighted={story.id === highlightedStoryId}
+              />
             </div>
           ))}
         </div>

@@ -18,7 +18,7 @@ export function CourseCard({
   const badge = courseBadgeLabel(course, locale);
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl border border-sage-100 bg-white shadow-sm transition hover:shadow-md">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl border border-sage-100 bg-white shadow-sm transition hover:bg-sage-50 hover:shadow-md">
       <div className="relative aspect-[4/3] w-full bg-sage-50">
         {course.photo_url && (
           <Image

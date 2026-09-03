@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { courseName, storyQuote, storyTitle } from "@/lib/i18n/content";
 import { InstagramEmbed } from "@/components/InstagramEmbed";
 import { TruncatedQuote } from "@/components/TruncatedQuote";
@@ -10,11 +11,15 @@ export function SuccessStoryCard({
   locale,
   compact = false,
   courses = [],
+  linkToStory = false,
+  highlighted = false,
 }: {
   story: SuccessStory;
   locale: Locale;
   compact?: boolean;
   courses?: CourseType[];
+  linkToStory?: boolean;
+  highlighted?: boolean;
 }) {
   const submittedDate = new Intl.DateTimeFormat(localeTags[locale], {
     day: "numeric",
@@ -25,9 +30,13 @@ export function SuccessStoryCard({
 
   return (
     <figure
-      className={`flex flex-col gap-4 rounded-2xl border border-sage-100 bg-white p-6 shadow-sm transition hover:bg-sage-50 ${
-        compact ? "h-[340px] sm:h-[380px] lg:h-[420px]" : "h-full"
-      }`}
+      className={`relative flex flex-col gap-4 rounded-2xl border p-6 shadow-sm transition ${
+        highlighted
+          ? "border-sage-500 bg-sage-50 ring-2 ring-sage-300"
+          : linkToStory
+            ? "border-sage-100 bg-white hover:bg-sand"
+            : "border-sage-100 bg-white hover:bg-sage-50"
+      } ${compact ? "h-[340px] sm:h-[380px] lg:h-[420px]" : "h-full"}`}
     >
       <div className={`flex flex-1 flex-col ${compact ? "overflow-hidden" : ""}`}>
         <h3 className="shrink-0 font-semibold text-charcoal line-clamp-1">
@@ -44,7 +53,7 @@ export function SuccessStoryCard({
               href={story.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 flex flex-1 flex-col items-center justify-center gap-2 rounded-xl bg-sage-50 text-center transition hover:bg-sage-100"
+              className="relative z-10 mt-2 flex flex-1 flex-col items-center justify-center gap-2 rounded-xl bg-sage-50 text-center transition hover:bg-sage-100"
             >
               <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="currentColor" strokeWidth={1.75}>
                 <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -79,6 +88,13 @@ export function SuccessStoryCard({
           <span className="block text-xs text-charcoal/50">{submittedDate}</span>
         </div>
       </figcaption>
+      {linkToStory && (
+        <Link
+          href={`/stories?story=${story.id}`}
+          aria-label={storyTitle(story, locale)}
+          className="absolute inset-0 z-0"
+        />
+      )}
     </figure>
   );
 }
